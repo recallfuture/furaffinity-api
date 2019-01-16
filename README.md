@@ -34,3 +34,13 @@ Search('search query', { /** SearchOptions */ type?, rating? }).then(res => {
   });
 });
 ```
+
+Looking up a specific submission:
+
+```javascript
+import { Submission } from 'furaffinity';
+
+Submission('1234567890').then(res => {
+  // res is a Submission
+});
+```

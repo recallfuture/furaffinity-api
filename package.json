@@ -1,0 +1,32 @@
+{
+  "name": "furaffinity",
+  "version": "3.0.0",
+  "description": "FurAffinity wrapper for Node.js",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "nodemon test/index.js",
+    "dev": "tsc-watch --onSuccess \"npm run test\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.insrt.uk/insert/furaffinity"
+  },
+  "keywords": [
+    "furaffinity"
+  ],
+  "author": "insert",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.3",
+    "fast-html-parser": "^1.0.1",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "@types/bluebird": "^3.5.25",
+    "@types/node": "^10.12.18",
+    "@types/request": "^2.48.1"
+  },
+  "files": [
+	"dist"
+  ]
+}

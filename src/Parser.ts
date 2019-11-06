@@ -125,45 +125,80 @@ export interface Submission {
 export function ParseSubmission(body: string, id: Number): Submission {
 	let root = HTMLParser.parse(body);
 	let table = root.querySelector('.maintable');
-	if (table.childNodes[1].childNodes[1].childNodes[1]) throw new Error('This submission cannot be viewed, this may be because the owner requires you to login, you haven\'t logged in to view mature content or you have not enabled mature content.');
-	let main = table.childNodes[3].childNodes[1];
-	let info = main.childNodes[20]; // info .maintable
-	let header = info.childNodes[1].childNodes[1].childNodes; // title of info table
-	let stats = info.childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].childNodes; // stats container
-	let res = stats[42].rawText.trim().split('x'); // res
+
+	// Check system message
+	let systemMessageNode = table.childNodes[1].childNodes[1].childNodes[1];
+	if (systemMessageNode && systemMessageNode.rawText === 'System Message') {
+		let systemMessage = table.childNodes[3].childNodes[1].rawText.trim();
+		throw new Error(systemMessage);
+	}
+
+	// Get main nodes
+	let download = table.querySelector('.aligncenter').childNodes[3].childNodes[0]; // download link
+	let header = table.querySelector('.information').childNodes; // title of info table
+	let stats = table.querySelector('.stats-container').childNodes; // stats container
+
+	// Check category
+	// @ts-ignore
+	let category: Category = Category[stats[10].rawText.trim()];
+	let iRes, iPosted, iRating, iSpecies, iGender, iFavorites, iComments, iViews, iKeywords
+	if (category === Category.Music || category === Category.Story || category === Category.Poetry) {
+		iPosted = 6;
+		iFavorites = 18;
+		iComments = 22;
+		iViews = 26;
+		iKeywords = 33;
+	} else {
+		iRes = 42;
+		iPosted = 6;
+		iRating = 55;
+		iSpecies = 18;
+		iGender = 22;
+		iFavorites = 26;
+		iComments = 30;
+		iViews = 34;
+		iKeywords = 49;
+	}
+
+	// for (let index = 0; index < stats.length; index++) {
+	// 	const element = stats[index];
+	// 	console.log(index + ':' + element.rawText.trim());
+	// }
+
+	let res = iRes ? stats[iRes].rawText.trim().split('x') : ['', '']; // res
 	return {
 		id,
 		url: 'https://www.furaffinity.net/view/' + id,
 		title: header[1].childNodes[0].rawText.trim(),
-		posted: (/title="([\s\S]+?)"/g.exec(stats[6].rawAttrs) || '')[1],
+		posted: stats[iPosted].attributes.title || '',
 		// @ts-ignore
-		rating: Rating[(/alt="([\s\S]+?) rating"/g.exec(stats[55].childNodes[1].rawAttrs) || '')[1]],
+		rating: iRating ? Rating[(/alt="([\s\S]+?) rating"/g.exec(stats[iRating].childNodes[1].rawAttrs) || '')[1]] : '',
 		author: {
 			url: 'https://www.furaffinity.net/user/' + header[3].childNodes[0].rawText.trim(),
 			name: header[3].childNodes[0].rawText.trim()
 		},
 		content: {
 			// @ts-ignore
-			category: Category[stats[10].rawText.trim()],
+			category,
 			// @ts-ignore
-			species: Species[stats[18].rawText.trim()],
+			species: iSpecies ? Species[stats[iSpecies].rawText.trim()] : '',
 			// @ts-ignore
-			gender: Gender[stats[22].rawText.trim()]
+			gender: iGender ? Gender[stats[iGender].rawText.trim()] : ''
 		},
 		stats: {
-			favorites: parseInt(stats[26].rawText.trim()),
-			comments: parseInt(stats[30].rawText.trim()),
-			views: parseInt(stats[34].rawText.trim())
+			favorites: parseInt(stats[iFavorites].rawText.trim()),
+			comments: parseInt(stats[iComments].rawText.trim()),
+			views: parseInt(stats[iViews].rawText.trim())
 		},
 		image: {
-			url: 'https:' + (/src="([\s\S]+?)"/g.exec(main.childNodes[5].rawAttrs) || '')[1],
+			url: 'https:' + (download.attributes.href || ''),
 			width: res[0],
 			height: res[1]
 		},
 		// @ts-ignore
-		keywords: stats[49].childNodes.filter(x => {
+		keywords: stats[iKeywords].childNodes.filter(x => {
 			return !!x.tagName;
-		// @ts-ignore
+			// @ts-ignore
 		}).map(x => {
 			return x.childNodes[0].rawText;
 		})

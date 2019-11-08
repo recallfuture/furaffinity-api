@@ -12,11 +12,13 @@ export function Login(cookieA: string, cookieB: string) {
 }
 
 export interface SearchOptions {
+	page?: number,
 	rating?: Rating,
 	type?: Type
 };
 
 export interface BrowseOptions {
+	page?: number,
 	rating?: Rating,
 	category?: Category,
 	tag?: Tag,
@@ -57,7 +59,8 @@ export function GetSearch(query: string, options?: SearchOptions): Promise<strin
 				'type-music': (options.type || 0xF) & Type.Music ? 'on' : 'off',
 				'type-story': (options.type || 0xF) & Type.Writing ? 'on' : 'off',
 				'type-poetry': (options.type || 0xF) & Type.Writing ? 'on' : 'off',
-				perpage: 72
+				perpage: 72,
+				page: options.page || 1,
 			} : {}
 		}, (err, res, body) => {
 			if (err) return reject(err);
@@ -92,7 +95,8 @@ export function GetBrowse(options?: BrowseOptions): Promise<string> {
 				'species': options.species,
 				'gender': options.gender,
 				perpage: 72,
-				go: 'Update'
+				go: 'Update',
+				page: options.page || 1,
 			}
 		}, (err, res, body) => {
 			if (err) return reject(err);

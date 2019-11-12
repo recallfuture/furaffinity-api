@@ -1,6 +1,6 @@
 {
-  "name": "furaffinity",
-  "version": "3.0.0",
+  "name": "furaffinity-api",
+  "version": "3.1.0",
   "description": "FurAffinity wrapper for Node.js",
   "main": "dist/index.js",
   "scripts": {
@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.insrt.uk/insert/furaffinity"
+    "url": "https://github.com/recallfuture/furaffinity-api"
   },
   "keywords": [
     "furaffinity"
   ],
-  "author": "insert",
+  "author": "recallfuture",
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.5.3",
@@ -27,6 +27,6 @@
     "@types/request": "^2.48.1"
   },
   "files": [
-	"dist"
+    "dist"
   ]
 }

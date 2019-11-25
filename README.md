@@ -9,9 +9,9 @@
 To get the most recent content:
 
 ```javascript
-import { Recent, Type, Login } from "furaffinity";
+import { Recent, Type, Login } from "furaffinity-api";
 // or
-let { Recent, Type, Login } = require("furaffinity");
+let { Recent, Type, Login } = require("furaffinity-api");
 
 // to allow all results to be accessible, add your cookies
 Login("cookie_a", "cookie_b");
@@ -27,7 +27,7 @@ Recent(Type.Artwork).then(res => {
 Searching for content:
 
 ```javascript
-import { Search, Type } from 'furaffinity';
+import { Search, Type } from 'furaffinity-api';
 
 Search('search query', { /** SearchOptions */ type?, rating?, page? }).then(res => {
   // res is an array of Result(s)
@@ -40,7 +40,7 @@ Search('search query', { /** SearchOptions */ type?, rating?, page? }).then(res 
 Looking up a specific submission:
 
 ```javascript
-import { Submission } from "furaffinity";
+import { Submission } from "furaffinity-api";
 
 Submission("1234567890").then(res => {
   // res is a Submission

@@ -2,6 +2,7 @@
 import HTMLParser from 'fast-html-parser';
 import { SubmissionType, Species, Category, Gender, Rating } from './Enums';
 import { Submission } from '.';
+import { GetWatchingList } from './Request';
 
 export interface Result {
 	type: SubmissionType,
@@ -158,3 +159,44 @@ export function ParseSubmission(body: string, id: Number): Submission {
 		})
 	};
 };
+
+export interface User {
+	id: string,
+	name: string,
+	avatar: string,
+	getWatchingList(): Promise<string[]>
+}
+
+export function ParseUser(body: string): User {
+	let root = HTMLParser.parse(body);
+
+	let name = root.querySelector('.userpage-flex-item.username span').rawText.trim().slice(1);
+	let id = name.replace('_', '').toLowerCase();
+	let avatar = 'http:' + root.querySelector('.user-nav-avatar').attributes.src;
+
+	return {
+		id,
+		name,
+		avatar,
+
+		async getWatchingList(): Promise<string[]> {
+			let result: string[] = [];
+			let page = 1;
+
+			while (true) {
+				const users = ParseWatchingList(await GetWatchingList(id, page++));
+				result = [...result, ...users];
+				if (users.length === 0 || users.length < 200) {
+					break;
+				}
+			}
+
+			return result;
+		}
+	};
+}
+
+export function ParseWatchingList(body: string): string[] {
+	let root = HTMLParser.parse(body);
+	return root.querySelectorAll('.watch-list-items a').map(a => a.rawText)
+}

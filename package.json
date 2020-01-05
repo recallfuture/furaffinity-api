@@ -17,6 +17,7 @@
   "author": "recallfuture",
   "license": "ISC",
   "dependencies": {
+    "@types/fast-html-parser": "^1.0.0",
     "axios": "^0.19.0",
     "fast-html-parser": "^1.0.1"
   },

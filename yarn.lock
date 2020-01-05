@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@types/fast-html-parser@^1.0.0":
+  version "1.0.0"
+  resolved "http://r.cnpmjs.org/@types/fast-html-parser/download/@types/fast-html-parser-1.0.0.tgz#64f2842f3d8313d2c539a3f0e4270df42425f713"
+  integrity sha1-ZPKELz2DE9LFOaPw5CcN9CQl9xM=
+
 "@types/node@^10.12.18":
   version "10.17.3"
   resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-10.17.3.tgz?cache=0&sync_timestamp=1572630676951&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-10.17.3.tgz#65a8d9a6a0f6af55595a2d0020617959130d6495"

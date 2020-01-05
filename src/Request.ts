@@ -42,9 +42,9 @@ export async function GetSearch(query: string, options?: SearchOptions): Promise
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
 		} : {},
 		form: options ? {
-			'rating-general': (options.rating || 0x7) & Rating.General ? 'on' : 'off',
-			'rating-mature': (options.rating || 0x7) & Rating.Mature ? 'on' : 'off',
-			'rating-adult': (options.rating || 0x7) & Rating.Adult ? 'on' : 'off',
+			'rating-general': (options.rating || Rating.Any) & Rating.General ? 'on' : 'off',
+			'rating-mature': (options.rating || Rating.Any) & Rating.Mature ? 'on' : 'off',
+			'rating-adult': (options.rating || Rating.Any) & Rating.Adult ? 'on' : 'off',
 			'type-art': (options.type || SearchType.All) & SearchType.Art ? 'on' : 'off',
 			'type-flash': (options.type || SearchType.All) & SearchType.Flash ? 'on' : 'off',
 			'type-photo': (options.type || SearchType.All) & SearchType.Photos ? 'on' : 'off',
@@ -92,6 +92,26 @@ export async function GetBrowse(options?: BrowseOptions): Promise<string> {
 
 export async function GetSubmission(id: Number): Promise<string> {
 	const res = await axios.get(ENDPOINT + 'view/' + id, {
+		headers: COOKIES.loggedIn ? {
+			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
+		} : {}
+	});
+	if (res.status != 200) throw new Error("Status code not 200; got " + res.status);
+	return res.data as string;
+}
+
+export async function GetUser(id: string): Promise<string> {
+	const res = await axios.get(ENDPOINT + 'user/' + id, {
+		headers: COOKIES.loggedIn ? {
+			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
+		} : {}
+	});
+	if (res.status != 200) throw new Error("Status code not 200; got " + res.status);
+	return res.data as string;
+}
+
+export async function GetWatchingList(id: string, page: number = 1): Promise<string> {
+	const res = await axios.get(`${ENDPOINT}watchlist/by/${id}/${page}`, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
 		} : {}

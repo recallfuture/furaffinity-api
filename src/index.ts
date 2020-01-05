@@ -1,5 +1,5 @@
-import { GetIndex, SearchOptions, GetSearch, GetSubmission, BrowseOptions, GetBrowse } from "./Request";
-import { ParseFigures, Result, ParseSubmission, Submission } from "./Parser";
+import { GetIndex, SearchOptions, GetSearch, GetSubmission, BrowseOptions, GetBrowse, GetUser } from "./Request";
+import { ParseFigures, Result, ParseSubmission, Submission, User, ParseUser } from './Parser';
 
 export * from "./Enums";
 
@@ -15,4 +15,8 @@ export async function Browse(options?: BrowseOptions): Promise<Result[]> {
 
 export async function Submission(id: Number): Promise<Submission> {
 	return ParseSubmission(await GetSubmission(id), id);
+}
+
+export async function User(id: string): Promise<User> {
+	return ParseUser(await GetUser(id));
 }

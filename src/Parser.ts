@@ -1,14 +1,14 @@
 // @ts-ignore
 import HTMLParser from 'fast-html-parser';
-import { SearchType, Species, Category, Gender, Rating } from './Enums';
-import { SearchOptions } from './Request';
+import { SubmissionType, Species, Category, Gender, Rating } from './Enums';
 import { Submission } from '.';
 
 export interface Result {
-	type: SearchType,
+	type: SubmissionType,
 	id: Number,
 	title: string,
 	url: string,
+	rating: Rating,
 	thumb: {
 		icon: string,
 		tiny: string,
@@ -17,20 +17,22 @@ export interface Result {
 		large: string
 	},
 	author: {
+		id: string,
 		url: string,
 		name: string
 	},
 	getSubmission(): Promise<Submission>
 };
 
-export function ParseFigure(figure: any, type: SearchType): Result {
+export function ParseFigure(figure: any): Result {
 	let id = figure.id.split('-').pop();
-	let thumb = 'https:' + (/src="([\s\S]+?)"/.exec(figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].rawAttrs) || [])[1];
+	let thumb = 'http:' + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attributes.src;
 	return {
-		type,
+		type: SubmissionType[figure.classNames[1].split('-').pop() as keyof typeof SubmissionType],
 		id,
 		title: figure.childNodes[1].childNodes[0].childNodes[0].childNodes[0].rawText,
 		url: 'https://www.furaffinity.net/view/' + id,
+		rating: Rating[figure.classNames[0].split('-').pop().replace(/^[a-z]/, ($1: string) => $1.toUpperCase()) as keyof typeof Rating],
 		thumb: {
 			icon: thumb.replace(/@\d+?-/g, '@75-'),
 			tiny: thumb.replace(/@\d+?-/g, '@150-'),
@@ -39,7 +41,8 @@ export function ParseFigure(figure: any, type: SearchType): Result {
 			large: thumb.replace(/@\d+?-/g, '@1600-')
 		},
 		author: {
-			url: 'https://www.furaffinity.net' + (/href="([\s\S]+?)"/.exec(figure.childNodes[1].childNodes[1].childNodes[2].rawAttrs) || [])[1],
+			id: figure.classNames[2].slice(2),
+			url: 'https://www.furaffinity.net/user/' + figure.classNames[2].slice(2),
 			name: figure.childNodes[1].childNodes[1].childNodes[2].childNodes[0].rawText
 		},
 		getSubmission: async () => {
@@ -48,29 +51,14 @@ export function ParseFigure(figure: any, type: SearchType): Result {
 	};
 };
 
-export function ParseSearch(body: string, options?: SearchOptions): Result[] {
+export function ParseFigures(body: string): Result[] {
 	let root = HTMLParser.parse(body);
 	let figures = root.querySelectorAll('figure');
 	let results: Result[] = [];
 	// @ts-ignore
 	figures.forEach(figure => {
 		if (figure.classNames) {
-			let type = SearchType.All;
-			if (options && options.type) type = options.type;
-			results.push(ParseFigure(figure, type));
-		}
-	});
-	return results;
-};
-
-export function ParseBrowse(body: string): Result[] {
-	let root = HTMLParser.parse(body);
-	let figures = root.querySelectorAll('figure');
-	let results: Result[] = [];
-	// @ts-ignore
-	figures.forEach(figure => {
-		if (figure.classNames) {
-			results.push(ParseFigure(figure, SearchType.All));
+			results.push(ParseFigure(figure));
 		}
 	});
 	return results;
@@ -80,10 +68,11 @@ export interface Submission {
 	id: Number,
 	url: string,
 	title: string,
-	posted: string,
+	posted: number,
 	rating: Rating,
 	author: {
-		url: String,
+		id: string,
+		url: string,
 		name: string
 	},
 	content: {
@@ -96,93 +85,76 @@ export interface Submission {
 		comments: Number,
 		views: Number
 	},
-	image: {
-		url: string,
-		width: Number,
-		height: Number
-	},
+	downloadUrl: string,
 	keywords: string[]
 };
 
 export function ParseSubmission(body: string, id: Number): Submission {
 	let root = HTMLParser.parse(body);
-	let table = root.querySelector('.maintable');
 
 	// Check system message
-	let systemMessageNode = table.childNodes[1].childNodes[1].childNodes[1];
-	if (systemMessageNode && systemMessageNode.rawText === 'System Message') {
-		let systemMessage = table.childNodes[3].childNodes[1].rawText.trim();
+	let noticeMessage = root.querySelector('section.notice-message');
+	if (noticeMessage) {
+		let systemMessage = noticeMessage.childNodes[1].childNodes[3].childNodes[0].rawText;
 		throw new Error(systemMessage);
 	}
 
 	// Get main nodes
-	let download = table.querySelector('.aligncenter').childNodes[3].childNodes[0]; // download link
-	let header = table.querySelector('.information').childNodes; // title of info table
-	let stats = table.querySelector('.stats-container').childNodes; // stats container
+	let main = root.querySelector('#columnpage');
+	let sidebar = main.querySelector('.submission-sidebar');
+	let content = main.querySelector('.submission-content');
 
-	// Check category
-	// @ts-ignore
-	let category: Category = Category[stats[10].rawText.trim()];
-	let iRes, iPosted, iRating, iSpecies, iGender, iFavorites, iComments, iViews, iKeywords
-	if (category === Category.Music || category === Category.Story || category === Category.Poetry) {
-		iPosted = 6;
-		iFavorites = 18;
-		iComments = 22;
-		iViews = 26;
-		iKeywords = 33;
-	} else {
-		iRes = 42;
-		iPosted = 6;
-		iRating = 55;
-		iSpecies = 18;
-		iGender = 22;
-		iFavorites = 26;
-		iComments = 30;
-		iViews = 34;
-		iKeywords = 49;
-	}
+	let stats = sidebar.querySelector('.stats-container');
+	let info = sidebar.querySelector('.info');
+	let tags = sidebar.querySelectorAll('.tags-row .tags a');
 
-	// for (let index = 0; index < stats.length; index++) {
-	// 	const element = stats[index];
-	// 	console.log(index + ':' + element.rawText.trim());
-	// }
+	// buttons
+	let downloadUrl: string = 'http:' + sidebar.querySelector('.buttons .download a').attributes.href;
 
-	let res = iRes ? stats[iRes].rawText.trim().split('x') : ['', '']; // res
+	// header
+	let title: string = content.querySelector('.submission-id-sub-container .submission-title p').rawText;
+	let authorName: string = content.querySelector('.submission-id-sub-container a strong').rawText;
+	let authorId: string = authorName.replace('_', '').toLowerCase();
+	let posted: string = content.querySelector('.submission-id-sub-container strong span').attributes.title;
+
+	// stats
+	let rating: Rating = Rating[stats.querySelector('.rating span').rawText.trim() as keyof typeof Rating];
+	let favorites: number = Number.parseInt(stats.querySelector('.favorites span').rawText);
+	let comments: number = Number.parseInt(stats.querySelector('.comments span').rawText);
+	let views: number = Number.parseInt(stats.querySelector('.views span').rawText);
+
+	// info
+	let category: Category = Category[info.querySelector('.category-name').rawText as keyof typeof Category];
+	let species: Species = Species[info.childNodes[3].childNodes[2].rawText as keyof typeof Species];
+	let gender: Gender = Gender[info.childNodes[5].childNodes[2].rawText as keyof typeof Gender];
+
 	return {
 		id,
-		url: 'https://www.furaffinity.net/view/' + id,
-		title: header[1].childNodes[0].rawText.trim(),
-		posted: stats[iPosted].attributes.title || '',
+		url: 'http://www.furaffinity.net/view/' + id,
+		title: title,
+		posted: Date.parse(posted),
 		// @ts-ignore
-		rating: iRating ? Rating[(/alt="([\s\S]+?) rating"/g.exec(stats[iRating].childNodes[1].rawAttrs) || '')[1]] : '',
+		rating: rating,
 		author: {
-			url: 'https://www.furaffinity.net/user/' + header[3].childNodes[0].rawText.trim(),
-			name: header[3].childNodes[0].rawText.trim()
+			id: authorId,
+			url: 'http://www.furaffinity.net/user/' + authorId,
+			name: authorName
 		},
 		content: {
-			// @ts-ignore
 			category,
-			// @ts-ignore
-			species: iSpecies ? Species[stats[iSpecies].rawText.trim()] : '',
-			// @ts-ignore
-			gender: iGender ? Gender[stats[iGender].rawText.trim()] : ''
+			species,
+			gender
 		},
 		stats: {
-			favorites: parseInt(stats[iFavorites].rawText.trim()),
-			comments: parseInt(stats[iComments].rawText.trim()),
-			views: parseInt(stats[iViews].rawText.trim())
+			favorites,
+			comments,
+			views
 		},
-		image: {
-			url: 'https:' + (download.attributes.href || ''),
-			width: res[0],
-			height: res[1]
-		},
+		// fix url when category is story or poetry
+		downloadUrl: category === Category.Story || category === Category.Poetry ? downloadUrl.replace('d.facdn.net/download/', 'd.facdn.net/') : downloadUrl,
 		// @ts-ignore
-		keywords: stats[iKeywords].childNodes.filter(x => {
-			return !!x.tagName;
-			// @ts-ignore
-		}).map(x => {
-			return x.childNodes[0].rawText;
+		keywords: tags.map(tag => {
+			return tag.rawText;
 		})
 	};
 };

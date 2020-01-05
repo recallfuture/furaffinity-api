@@ -8,6 +8,13 @@ export enum SearchType {
 	All = 0x3F
 };
 
+export enum SubmissionType {
+	'image' = 1,
+	'flash' = 2,
+	'text' = 3,
+	'audio' = 4
+}
+
 export enum Rating {
 	General = 1,
 	Mature = 1 << 1,

@@ -1,17 +1,16 @@
 import { GetIndex, SearchOptions, GetSearch, GetSubmission, BrowseOptions, GetBrowse } from "./Request";
-import { ParseSearch, Result, ParseSubmission, Submission, ParseBrowse } from "./Parser";
-import { SearchType } from "./Enums";
+import { ParseFigures, Result, ParseSubmission, Submission } from "./Parser";
 
 export * from "./Enums";
 
-export { Login } from './Request';
+export { axios, Login } from './Request';
 
 export async function Search(query: string, options?: SearchOptions): Promise<Result[]> {
-	return ParseSearch(await GetSearch(query, options), options);
+	return ParseFigures(await GetSearch(query, options));
 }
 
 export async function Browse(options?: BrowseOptions): Promise<Result[]> {
-	return ParseBrowse(await GetBrowse(options));
+	return ParseFigures(await GetBrowse(options));
 }
 
 export async function Submission(id: Number): Promise<Submission> {

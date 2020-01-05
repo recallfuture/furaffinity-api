@@ -1,14 +1,10 @@
 import { GetIndex, SearchOptions, GetSearch, GetSubmission, BrowseOptions, GetBrowse } from "./Request";
-import { ParseIndex, ParseSearch, Result, ParseSubmission, Submission, ParseBrowse } from "./Parser";
-import { Type } from "./Enums";
+import { ParseSearch, Result, ParseSubmission, Submission, ParseBrowse } from "./Parser";
+import { SearchType } from "./Enums";
 
 export * from "./Enums";
 
 export { Login } from './Request';
-
-export async function Recent(type?: Type): Promise<Result[]> {
-	return ParseIndex(await GetIndex(), type);
-}
 
 export async function Search(query: string, options?: SearchOptions): Promise<Result[]> {
 	return ParseSearch(await GetSearch(query, options), options);

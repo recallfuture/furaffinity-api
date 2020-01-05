@@ -17,14 +17,11 @@
   "author": "recallfuture",
   "license": "ISC",
   "dependencies": {
-    "bluebird": "^3.5.3",
-    "fast-html-parser": "^1.0.1",
-    "request": "^2.88.0"
+    "axios": "^0.19.0",
+    "fast-html-parser": "^1.0.1"
   },
   "devDependencies": {
-    "@types/bluebird": "^3.5.25",
-    "@types/node": "^10.12.18",
-    "@types/request": "^2.48.1"
+    "@types/node": "^10.12.18"
   },
   "files": [
     "dist"

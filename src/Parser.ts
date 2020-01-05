@@ -1,11 +1,11 @@
 // @ts-ignore
 import HTMLParser from 'fast-html-parser';
-import { Type, Species, Category, Gender, Rating } from './Enums';
+import { SearchType, Species, Category, Gender, Rating } from './Enums';
 import { SearchOptions } from './Request';
 import { Submission } from '.';
 
 export interface Result {
-	type: Type,
+	type: SearchType,
 	id: Number,
 	title: string,
 	url: string,
@@ -23,7 +23,7 @@ export interface Result {
 	getSubmission(): Promise<Submission>
 };
 
-export function ParseFigure(figure: any, type: Type): Result {
+export function ParseFigure(figure: any, type: SearchType): Result {
 	let id = figure.id.split('-').pop();
 	let thumb = 'https:' + (/src="([\s\S]+?)"/.exec(figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].rawAttrs) || [])[1];
 	return {
@@ -48,24 +48,6 @@ export function ParseFigure(figure: any, type: Type): Result {
 	};
 };
 
-export function ParseIndex(body: string, type?: Type): Result[] {
-	let root = HTMLParser.parse(body);
-	let sections = root.querySelectorAll('section');
-	let results: Result[] = [];
-	let types = [Type.Artwork, Type.Writing, Type.Music, Type.Crafts];
-	// @ts-ignore
-	sections.forEach((section, i) => {
-		if (type && types[i] != type) return;
-		// @ts-ignore
-		section.childNodes.forEach(figure => {
-			if (figure.classNames) {
-				results.push(ParseFigure(figure, types[i]));
-			}
-		});
-	});
-	return results;
-};
-
 export function ParseSearch(body: string, options?: SearchOptions): Result[] {
 	let root = HTMLParser.parse(body);
 	let figures = root.querySelectorAll('figure');
@@ -73,7 +55,7 @@ export function ParseSearch(body: string, options?: SearchOptions): Result[] {
 	// @ts-ignore
 	figures.forEach(figure => {
 		if (figure.classNames) {
-			let type = Type.Any;
+			let type = SearchType.All;
 			if (options && options.type) type = options.type;
 			results.push(ParseFigure(figure, type));
 		}
@@ -88,7 +70,7 @@ export function ParseBrowse(body: string): Result[] {
 	// @ts-ignore
 	figures.forEach(figure => {
 		if (figure.classNames) {
-			results.push(ParseFigure(figure, Type.Any));
+			results.push(ParseFigure(figure, SearchType.All));
 		}
 	});
 	return results;

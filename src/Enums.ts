@@ -1,9 +1,11 @@
-export enum Type {
-	Artwork = 1, // art + flash
-	Writing = 1 << 1, // story + poetry
-	Music = 1 << 2, // music
-	Crafts = 1 << 3,
-	Any = 0xF // all
+export enum SearchType {
+	Art = 1,
+	Music = 1 << 1,
+	Flash = 1 << 2,
+	Story = 1 << 3,
+	Photos = 1 << 4,
+	Poetry = 1 << 5,
+	All = 0x3F
 };
 
 export enum Rating {

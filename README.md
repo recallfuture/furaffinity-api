@@ -6,22 +6,15 @@
 
 ## Usage
 
-To get the most recent content:
+Login to furaffinity:
 
 ```javascript
-import { Recent, Type, Login } from "furaffinity-api";
+import { Login } from "furaffinity-api";
 // or
-let { Recent, Type, Login } = require("furaffinity-api");
+let { Login } = require("furaffinity-api");
 
 // to allow all results to be accessible, add your cookies
 Login("cookie_a", "cookie_b");
-
-Recent(Type.Artwork).then(res => {
-  // res is an array of Result(s)
-  res[0].getSubmission().then(submission => {
-    // submission is a Submission
-  });
-});
 ```
 
 Searching for content:
@@ -44,5 +37,18 @@ import { Submission } from "furaffinity-api";
 
 Submission("1234567890").then(res => {
   // res is a Submission
+});
+```
+
+Get information of a user:
+
+```javascript
+import { User } from "furaffinity-api";
+
+User("username").then(res => {
+  // res is a User
+  res.getWatchingList().then(list => {
+    // list is a string array, which contains username
+  });
 });
 ```

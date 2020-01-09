@@ -4,6 +4,8 @@
 
 > FurAffinity wrapper for Node.js
 
+This project can only be used with Furaffinity's **Modern** style.
+
 ## Usage
 
 Login to furaffinity:
@@ -40,15 +42,16 @@ Submission("1234567890").then(res => {
 });
 ```
 
-Get information of a user:
+Get information of a author:
 
 ```javascript
-import { User } from "furaffinity-api";
+import { Author, WatchingList } from "furaffinity-api";
 
-User("username").then(res => {
-  // res is a User
-  res.getWatchingList().then(list => {
-    // list is a string array, which contains username
+Author("username").then(res => {
+  // res is an Author
+  // Author has id, name, url and avatar(maybe undefined)
+  WatchingList(res.id).then(list => {
+    // list is an Author array
   });
 });
 ```

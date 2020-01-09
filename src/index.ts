@@ -1,9 +1,10 @@
-import { GetIndex, SearchOptions, GetSearch, GetSubmission, BrowseOptions, GetBrowse, GetUser } from "./Request";
-import { ParseFigures, Result, ParseSubmission, Submission, User, ParseUser } from './Parser';
+import { SearchOptions, GetSearch, GetSubmission, BrowseOptions, GetBrowse, GetAuthor } from "./Request";
+import { ParseFigures, Result, ParseSubmission, Submission, Author, ParseAuthor } from './Parser';
 
 export * from "./Enums";
 
-export { axios, Login } from './Request';
+export { Login } from './Request';
+export { WatchingList } from './Parser';
 
 export async function Search(query: string, options?: SearchOptions): Promise<Result[]> {
 	return ParseFigures(await GetSearch(query, options));
@@ -17,6 +18,6 @@ export async function Submission(id: Number): Promise<Submission> {
 	return ParseSubmission(await GetSubmission(id), id);
 }
 
-export async function User(id: string): Promise<User> {
-	return ParseUser(await GetUser(id));
+export async function Author(id: string): Promise<Author> {
+	return ParseAuthor(await GetAuthor(id));
 }

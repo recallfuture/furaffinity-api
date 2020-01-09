@@ -4,6 +4,10 @@ import { SubmissionType, Species, Category, Gender, Rating } from './Enums';
 import { Submission } from '.';
 import { GetWatchingList } from './Request';
 
+function ConvertNameToId(name: string): string {
+	return name.trim().replace('_', '').toLowerCase();
+}
+
 export interface Result {
 	type: SubmissionType,
 	id: Number,
@@ -71,11 +75,7 @@ export interface Submission {
 	title: string,
 	posted: number,
 	rating: Rating,
-	author: {
-		id: string,
-		url: string,
-		name: string
-	},
+	author: Author,
 	content: {
 		category: Category,
 		species: Species,
@@ -114,8 +114,8 @@ export function ParseSubmission(body: string, id: Number): Submission {
 
 	// header
 	let title: string = content.querySelector('.submission-id-sub-container .submission-title p').rawText;
-	let authorName: string = content.querySelector('.submission-id-sub-container a strong').rawText;
-	let authorId: string = authorName.replace('_', '').toLowerCase();
+	let authorName: string = content.querySelector('.submission-id-sub-container a strong').rawText.trim();
+	let authorId: string = ConvertNameToId(authorName);
 	let posted: string = content.querySelector('.submission-id-sub-container strong span').attributes.title;
 
 	// stats
@@ -138,8 +138,8 @@ export function ParseSubmission(body: string, id: Number): Submission {
 		rating: rating,
 		author: {
 			id: authorId,
-			url: 'http://www.furaffinity.net/user/' + authorId,
-			name: authorName
+			name: authorName,
+			url: 'http://www.furaffinity.net/user/' + authorId
 		},
 		content: {
 			category,
@@ -155,48 +155,59 @@ export function ParseSubmission(body: string, id: Number): Submission {
 		downloadUrl: category === Category.Story || category === Category.Poetry ? downloadUrl.replace('d.facdn.net/download/', 'd.facdn.net/') : downloadUrl,
 		// @ts-ignore
 		keywords: tags.map(tag => {
-			return tag.rawText;
+			return tag.rawText.trim();
 		})
 	};
 };
 
-export interface User {
+export interface Author {
 	id: string,
 	name: string,
-	avatar: string,
-	getWatchingList(): Promise<string[]>
+	url: string,
+	avatar?: string,
 }
 
-export function ParseUser(body: string): User {
+export function ParseAuthor(body: string): Author {
 	let root = HTMLParser.parse(body);
 
 	let name = root.querySelector('.userpage-flex-item.username span').rawText.trim().slice(1);
-	let id = name.replace('_', '').toLowerCase();
+	let id = ConvertNameToId(name);
+	let url = 'http://www.furaffinity.net/user/' + id;
 	let avatar = 'http:' + root.querySelector('.user-nav-avatar').attributes.src;
 
 	return {
 		id,
 		name,
+		url,
 		avatar,
-
-		async getWatchingList(): Promise<string[]> {
-			let result: string[] = [];
-			let page = 1;
-
-			while (true) {
-				const users = ParseWatchingList(await GetWatchingList(id, page++));
-				result = [...result, ...users];
-				if (users.length === 0 || users.length < 200) {
-					break;
-				}
-			}
-
-			return result;
-		}
 	};
 }
 
-export function ParseWatchingList(body: string): string[] {
+export async function WatchingList(id: string): Promise<Author[]> {
+	let result: Author[] = [];
+	let page = 1;
+
+	while (true) {
+		const users = ParseWatchingList(await GetWatchingList(id, page++));
+		result = [...result, ...users];
+		if (users.length === 0 || users.length < 200) {
+			break;
+		}
+	}
+
+	return result;
+}
+
+export function ParseWatchingList(body: string): Author[] {
 	let root = HTMLParser.parse(body);
-	return root.querySelectorAll('.watch-list-items a').map(a => a.rawText)
+	return root.querySelectorAll('.watch-list-items a').map(a => {
+		let name = a.rawText.trim();
+		let id = ConvertNameToId(name);
+		let url = 'http://www.furaffinity.net/user/' + id;
+		return {
+			id,
+			name,
+			url
+		};
+	})
 }

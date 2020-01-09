@@ -2,7 +2,7 @@ const ENDPOINT = 'http://www.furaffinity.net/';
 import axios from 'axios';
 import { Rating, SearchType, Category, Tag, Species, Gender } from './Enums';
 
-export { axios };
+axios.defaults.timeout = 10000;
 export const COOKIES = { loggedIn: false, a: '', b: '' };
 
 export function Login(cookieA: string, cookieB: string) {
@@ -100,7 +100,7 @@ export async function GetSubmission(id: Number): Promise<string> {
 	return res.data as string;
 }
 
-export async function GetUser(id: string): Promise<string> {
+export async function GetAuthor(id: string): Promise<string> {
 	const res = await axios.get(ENDPOINT + 'user/' + id, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`

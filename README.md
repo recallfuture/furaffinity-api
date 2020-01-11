@@ -42,7 +42,7 @@ Submission("1234567890").then(res => {
 });
 ```
 
-Get information of a author:
+Get information of an author:
 
 ```javascript
 import { Author, WatchingList } from "furaffinity-api";

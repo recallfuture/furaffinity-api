@@ -1,38 +1,39 @@
-import HTMLParser from 'fast-html-parser';
+import cheerio from 'cheerio';
 import { SubmissionType, Species, Category, Gender, Rating } from './Enums';
-import { Submission } from '.';
-import { GetWatchingList } from './Request';
+import { Author, Result, Submission } from './interfaces';
+import { Submission as GetSubmission } from '.';
+import { FetchWatchingList } from './Request';
 
-function ConvertNameToId(name: string): string {
+/**
+ * Convert author name to author id
+ * @param name author name
+ */
+function convertNameToId(name: string): string {
 	return name.trim().replace('_', '').toLowerCase();
 }
 
-export interface Result {
-	type: SubmissionType,
-	id: string,
-	title: string,
-	url: string,
-	rating: Rating,
-	thumb: {
-		icon: string,
-		tiny: string,
-		small: string,
-		medium: string,
-		large: string
-	},
-	author: Author,
-	getSubmission(): Promise<Submission>
-};
+/**
+ * Get class names from element
+ * @param element CheerioElement
+ */
+function classNames(element: CheerioElement): string[] {
+	return element.attribs.class.split(" ");
+}
 
-export function ParseFigure(figure: any): Result {
-	let id = figure.id.split('-').pop();
-	let thumb = 'http:' + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attributes.src;
+/**
+ * Parse result from figure element
+ * @param figure CheerioElement
+ */
+export function ParseFigure(figure: CheerioElement): Result {
+	const id: string = figure.attribs.id.split('-').pop() ?? "";
+	const thumb: string = 'http:' + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attribs.src;
+
 	return {
-		type: SubmissionType[figure.classNames[1].split('-').pop() as keyof typeof SubmissionType],
+		type: SubmissionType[classNames(figure)[1].split('-').pop() as keyof typeof SubmissionType],
 		id,
-		title: figure.childNodes[1].childNodes[0].childNodes[0].childNodes[0].rawText,
+		title: figure.childNodes[1].childNodes[0].childNodes[0].childNodes[0].nodeValue.trim(),
 		url: 'https://www.furaffinity.net/view/' + id,
-		rating: Rating[figure.classNames[0].split('-').pop().replace(/^[a-z]/, ($1: string) => $1.toUpperCase()) as keyof typeof Rating],
+		rating: Rating[classNames(figure)[0].split('-').pop()?.replace(/^[a-z]/, ($1: string) => $1.toUpperCase()) as keyof typeof Rating],
 		thumb: {
 			icon: thumb.replace(/@\d+?-/g, '@75-'),
 			tiny: thumb.replace(/@\d+?-/g, '@150-'),
@@ -41,100 +42,92 @@ export function ParseFigure(figure: any): Result {
 			large: thumb.replace(/@\d+?-/g, '@1600-')
 		},
 		author: {
-			id: figure.classNames[2].slice(2),
-			url: 'https://www.furaffinity.net/user/' + figure.classNames[2].slice(2),
-			name: figure.childNodes[1].childNodes[1].childNodes[2].childNodes[0].rawText
+			id: classNames(figure)[2].slice(2),
+			url: 'https://www.furaffinity.net/user/' + classNames(figure)[2].slice(2),
+			name: figure.childNodes[1].childNodes[1].childNodes[2].childNodes[0].nodeValue.trim()
 		},
 		getSubmission: async () => {
-			return await Submission(id);
+			return await GetSubmission(id);
 		}
 	};
 };
 
+/**
+ * Parse all figure's info from HTML
+ * @param body HTML document
+ */
 export function ParseFigures(body: string): Result[] {
-	let root = HTMLParser.parse(body);
-	let figures = root.querySelectorAll('figure');
-	let results: Result[] = [];
-	// @ts-ignore
-	figures.forEach(figure => {
-		if (figure.classNames) {
-			results.push(ParseFigure(figure));
-		}
+	const $ = cheerio.load(body);
+
+	const results: Result[] = [];
+	$("figure").each((index, figure) => {
+		results.push(ParseFigure(figure));
 	});
 	return results;
 };
 
-export interface Submission {
-	id: string,
-	url: string,
-	title: string,
-	posted: number,
-	rating: Rating,
-	author: Author,
-	content: {
-		category: Category,
-		species: Species,
-		gender: Gender
-	},
-	stats: {
-		favorites: Number,
-		comments: Number,
-		views: Number
-	},
-	downloadUrl: string,
-	keywords: string[]
-};
-
+/**
+ * Get submission's info
+ * @param body HTML document
+ * @param id Subumission id
+ */
 export function ParseSubmission(body: string, id: string): Submission {
-	let root = HTMLParser.parse(body);
+	const $ = cheerio.load(body);
 
 	// Check system message
-	let noticeMessage = root.querySelector('section.notice-message');
-	if (noticeMessage) {
-		let systemMessage = noticeMessage.childNodes[1].childNodes[3].childNodes[0].rawText;
+	const noticeMessage = $('section.notice-message');
+	if (noticeMessage.length !== 0) {
+		const systemMessage = noticeMessage[0].childNodes[1].childNodes[3].childNodes[0].nodeValue;
 		throw new Error(systemMessage);
 	}
 
 	// Get main nodes
-	let main = root.querySelector('#columnpage');
-	let sidebar = main.querySelector('.submission-sidebar');
-	let content = main.querySelector('.submission-content');
+	const main = $('#columnpage');
+	const sidebar = main.find('.submission-sidebar');
+	const content = main.find('.submission-content');
 
-	let stats = sidebar.querySelector('.stats-container');
-	let info = sidebar.querySelector('.info');
-	let tags = sidebar.querySelectorAll('.tags-row .tags a');
+	const stats = sidebar.find('.stats-container');
+	const info = sidebar.find('.info');
+	const tags = sidebar.find('.tags-row .tags a');
 
 	// buttons
-	let downloadUrl: string = 'http:' + sidebar.querySelector('.buttons .download a').attributes.href;
+	let downloadUrl: string = 'http:' + sidebar.find('.buttons .download a')[0].attribs.href;
+	console.log(downloadUrl);
 
 	// header
-	let title: string = content.querySelector('.submission-id-sub-container .submission-title p').rawText;
-	let authorName: string = content.querySelector('.submission-id-sub-container a strong').rawText.trim();
-	let authorId: string = ConvertNameToId(authorName);
-	let posted: string = content.querySelector('.submission-id-sub-container strong span').attributes.title;
+	const title: string = content.find('.submission-id-sub-container .submission-title p')[0].childNodes[0].data?.trim() ?? "";
+	const authorName: string = content.find('.submission-id-sub-container a strong')[0].childNodes[0].data?.trim() ?? "";
+	const authorId: string = convertNameToId(authorName);
+	const posted: string = content.find('.submission-id-sub-container strong span')[0].attribs.title;
+	const authorAvatar: string = "http:" + content.find('.submission-id-avatar img')[0].attribs.src;
 
 	// stats
-	let rating: Rating = Rating[stats.querySelector('.rating span').rawText.trim() as keyof typeof Rating];
-	let favorites: number = Number.parseInt(stats.querySelector('.favorites span').rawText);
-	let comments: number = Number.parseInt(stats.querySelector('.comments span').rawText);
-	let views: number = Number.parseInt(stats.querySelector('.views span').rawText);
+	const rating: Rating = Rating[stats.find('.rating span')[0].childNodes[0].data?.trim() as keyof typeof Rating];
+	const favorites: number = Number.parseInt(stats.find('.favorites span')[0].childNodes[0].data?.trim() ?? "");
+	const comments: number = Number.parseInt(stats.find('.comments span')[0].childNodes[0].data?.trim() ?? "");
+	const views: number = Number.parseInt(stats.find('.views span')[0].childNodes[0].data?.trim() ?? "");
 
 	// info
-	let category: Category = Category[info.querySelector('.category-name').rawText as keyof typeof Category];
-	let species: Species = Species[info.childNodes[3].childNodes[2].rawText as keyof typeof Species];
-	let gender: Gender = Gender[info.childNodes[5].childNodes[2].rawText as keyof typeof Gender];
+	const category: Category = Category[info.find('.category-name')[0].childNodes[0].data?.trim() as keyof typeof Category];
+	const species: Species = Species[info[0].childNodes[3].childNodes[2].childNodes[0].data?.trim() as keyof typeof Species];
+	const gender: Gender = Gender[info[0].childNodes[5].childNodes[2].childNodes[0].data?.trim() as keyof typeof Gender];
+
+	// fix url when category is story or poetry
+	if (category === Category.Story || category === Category.Poetry) {
+		downloadUrl = downloadUrl.replace('d.facdn.net/download/', 'd.facdn.net/');
+	}
 
 	return {
 		id,
 		url: 'http://www.furaffinity.net/view/' + id,
 		title: title,
 		posted: Date.parse(posted),
-		// @ts-ignore
 		rating: rating,
 		author: {
 			id: authorId,
 			name: authorName,
-			url: 'http://www.furaffinity.net/user/' + authorId
+			url: 'http://www.furaffinity.net/user/' + authorId,
+			avatar: authorAvatar
 		},
 		content: {
 			category,
@@ -146,29 +139,24 @@ export function ParseSubmission(body: string, id: string): Submission {
 			comments,
 			views
 		},
-		// fix url when category is story or poetry
-		downloadUrl: category === Category.Story || category === Category.Poetry ? downloadUrl.replace('d.facdn.net/download/', 'd.facdn.net/') : downloadUrl,
-		// @ts-ignore
-		keywords: tags.map(tag => {
-			return tag.rawText.trim();
-		})
+		downloadUrl,
+		keywords: tags.map((index, tag) => {
+			return tag.childNodes[0].data?.trim() ?? "";
+		}).get()
 	};
 };
 
-export interface Author {
-	id: string,
-	name: string,
-	url: string,
-	avatar?: string,
-}
-
+/**
+ * Get author's info
+ * @param body HTML document
+ */
 export function ParseAuthor(body: string): Author {
-	let root = HTMLParser.parse(body);
+	const $ = cheerio.load(body);
 
-	let name = root.querySelector('.userpage-flex-item.username span').rawText.trim().slice(1);
-	let id = ConvertNameToId(name);
-	let url = 'http://www.furaffinity.net/user/' + id;
-	let avatar = 'http:' + root.querySelector('.user-nav-avatar').attributes.src;
+	const name: string = $('.userpage-flex-item.username span')[0].childNodes[0].data?.trim().slice(1) ?? "";
+	const id: string = convertNameToId(name);
+	const url: string = 'http://www.furaffinity.net/user/' + id;
+	const avatar: string = 'http:' + $('.user-nav-avatar')[0].attribs.src;
 
 	return {
 		id,
@@ -178,31 +166,21 @@ export function ParseAuthor(body: string): Author {
 	};
 }
 
-export async function WatchingList(id: string): Promise<Author[]> {
-	let result: Author[] = [];
-	let page = 1;
-
-	while (true) {
-		const users = ParseWatchingList(await GetWatchingList(id, page++));
-		result = [...result, ...users];
-		if (users.length === 0 || users.length < 200) {
-			break;
-		}
-	}
-
-	return result;
-}
-
+/**
+ * Get all Author's info from peer page of watching list
+ * @param body HTML document
+ */
 export function ParseWatchingList(body: string): Author[] {
-	let root = HTMLParser.parse(body);
-	return root.querySelectorAll('.watch-list-items a').map(a => {
-		let name = a.rawText.trim();
-		let id = ConvertNameToId(name);
-		let url = 'http://www.furaffinity.net/user/' + id;
+	const $ = cheerio.load(body);
+
+	return $('.watch-list-items a').map((index, a) => {
+		const name = a.childNodes[0].data?.trim() ?? "";
+		const id = convertNameToId(name);
+		const url = 'http://www.furaffinity.net/user/' + id;
 		return {
 			id,
 			name,
 			url
 		};
-	})
+	}).get();
 }

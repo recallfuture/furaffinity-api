@@ -1,23 +1,60 @@
-import { SearchOptions, GetSearch, GetSubmission, BrowseOptions, GetBrowse, GetAuthor } from "./Request";
-import { ParseFigures, Result, ParseSubmission, Submission, Author, ParseAuthor } from './Parser';
+import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList } from "./Request";
+import { ParseFigures, ParseSubmission, ParseAuthor, ParseWatchingList } from './Parser';
+import { Author, Result, Submission } from './interfaces';
 
 export * from "./Enums";
+export * from "./interfaces";
 
 export { Login } from './Request';
-export { WatchingList } from './Parser';
 
+/**
+ * Get results from search page
+ * @param query search query
+ * @param options search options
+ */
 export async function Search(query: string, options?: SearchOptions): Promise<Result[]> {
-	return ParseFigures(await GetSearch(query, options));
+	return ParseFigures(await FetchSearch(query, options));
 }
 
+/**
+ * Get results from browse page
+ * @param options browse options
+ */
 export async function Browse(options?: BrowseOptions): Promise<Result[]> {
-	return ParseFigures(await GetBrowse(options));
+	return ParseFigures(await FetchBrowse(options));
 }
 
+/**
+ * Get submission's info by pass submission id
+ * @param id submission id
+ */
 export async function Submission(id: string): Promise<Submission> {
-	return ParseSubmission(await GetSubmission(id), id);
+	return ParseSubmission(await FetchSubmission(id), id);
 }
 
+/**
+ * Get author's info by pass author id
+ * @param id author id
+ */
 export async function Author(id: string): Promise<Author> {
-	return ParseAuthor(await GetAuthor(id));
+	return ParseAuthor(await FetchAuthor(id));
+}
+
+/**
+ * Get an author's watching list
+ * @param id author id
+ */
+export async function WatchingList(id: string): Promise<Author[]> {
+	let result: Author[] = [];
+	let page = 1;
+
+	while (true) {
+		const users = ParseWatchingList(await FetchWatchingList(id, page++));
+		result = [...result, ...users];
+		if (users.length === 0 || users.length < 200) {
+			break;
+		}
+	}
+
+	return result;
 }

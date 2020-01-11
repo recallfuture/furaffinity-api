@@ -26,7 +26,7 @@ export interface BrowseOptions {
 	gender?: Gender
 };
 
-export async function GetIndex(): Promise<string> {
+export async function FetchIndex(): Promise<string> {
 	const res = await axios.get(ENDPOINT, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
@@ -36,7 +36,7 @@ export async function GetIndex(): Promise<string> {
 	return res.data as string;
 }
 
-export async function GetSearch(query: string, options?: SearchOptions): Promise<string> {
+export async function FetchSearch(query: string, options?: SearchOptions): Promise<string> {
 	const res = await axios.post(ENDPOINT + 'search/?q=' + encodeURIComponent(query), {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
@@ -60,7 +60,7 @@ export async function GetSearch(query: string, options?: SearchOptions): Promise
 }
 
 let warn = false;
-export async function GetBrowse(options?: BrowseOptions): Promise<string> {
+export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
 	warn || console.log('WARN: Browse currently ignores any options passed.');
 	warn = true;
 	options = Object.assign({
@@ -90,7 +90,7 @@ export async function GetBrowse(options?: BrowseOptions): Promise<string> {
 	return res.data as string;
 }
 
-export async function GetSubmission(id: string): Promise<string> {
+export async function FetchSubmission(id: string): Promise<string> {
 	const res = await axios.get(ENDPOINT + 'view/' + id, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
@@ -100,7 +100,7 @@ export async function GetSubmission(id: string): Promise<string> {
 	return res.data as string;
 }
 
-export async function GetAuthor(id: string): Promise<string> {
+export async function FetchAuthor(id: string): Promise<string> {
 	const res = await axios.get(ENDPOINT + 'user/' + id, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
@@ -110,7 +110,7 @@ export async function GetAuthor(id: string): Promise<string> {
 	return res.data as string;
 }
 
-export async function GetWatchingList(id: string, page: number = 1): Promise<string> {
+export async function FetchWatchingList(id: string, page: number = 1): Promise<string> {
 	const res = await axios.get(`${ENDPOINT}watchlist/by/${id}/${page}`, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`

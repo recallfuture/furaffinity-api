@@ -21,11 +21,7 @@ export interface Result {
 		medium: string,
 		large: string
 	},
-	author: {
-		id: string,
-		url: string,
-		name: string
-	},
+	author: Author,
 	getSubmission(): Promise<Submission>
 };
 

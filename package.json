@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "nodemon test/index.js",
-    "dev": "tsc-watch --onSuccess \"npm run test\""
+    "dev": "tsc-watch --compiler typescript/bin/tsc --onSuccess \"npm run test\""
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,9 @@
   },
   "devDependencies": {
     "@types/fast-html-parser": "^1.0.0",
-    "@types/node": "^10.12.18"
+    "@types/node": "^10.12.18",
+    "tsc-watch": "^4.0.0",
+    "typescript": "^3.7.4"
   },
   "files": [
     "dist"

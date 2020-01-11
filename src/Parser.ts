@@ -1,4 +1,3 @@
-// @ts-ignore
 import HTMLParser from 'fast-html-parser';
 import { SubmissionType, Species, Category, Gender, Rating } from './Enums';
 import { Submission } from '.';
@@ -10,7 +9,7 @@ function ConvertNameToId(name: string): string {
 
 export interface Result {
 	type: SubmissionType,
-	id: Number,
+	id: string,
 	title: string,
 	url: string,
 	rating: Rating,
@@ -66,7 +65,7 @@ export function ParseFigures(body: string): Result[] {
 };
 
 export interface Submission {
-	id: Number,
+	id: string,
 	url: string,
 	title: string,
 	posted: number,
@@ -86,7 +85,7 @@ export interface Submission {
 	keywords: string[]
 };
 
-export function ParseSubmission(body: string, id: Number): Submission {
+export function ParseSubmission(body: string, id: string): Submission {
 	let root = HTMLParser.parse(body);
 
 	// Check system message

@@ -14,7 +14,7 @@ export async function Browse(options?: BrowseOptions): Promise<Result[]> {
 	return ParseFigures(await GetBrowse(options));
 }
 
-export async function Submission(id: Number): Promise<Submission> {
+export async function Submission(id: string): Promise<Submission> {
 	return ParseSubmission(await GetSubmission(id), id);
 }
 

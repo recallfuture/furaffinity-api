@@ -90,7 +90,7 @@ export async function GetBrowse(options?: BrowseOptions): Promise<string> {
 	return res.data as string;
 }
 
-export async function GetSubmission(id: Number): Promise<string> {
+export async function GetSubmission(id: string): Promise<string> {
 	const res = await axios.get(ENDPOINT + 'view/' + id, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`

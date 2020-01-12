@@ -1,27 +1,50 @@
-# fa-node
+<h1 align="center">
+  furaffinity-api
+</h1>
 
-** This Project is forked from [https://gitlab.insrt.uk/insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity) **
+<h5 align="center">FurAffinity wrapper for Node.js</h5>
 
-> FurAffinity wrapper for Node.js
+<div align="center">
+  <a href="https://www.npmjs.com/package/furaffinity-api">
+    <img alt="npm" src="https://img.shields.io/npm/v/furaffinity-api">
+  </a>
+  <a href="https://www.npmjs.com/package/furaffinity-api">
+    <img alt="npm" src="https://img.shields.io/npm/dw/furaffinity-api">
+  </a>
+  <a href="https://github.com/recallfuture/furaffinity-api">
+    <img alt="NPM" src="https://img.shields.io/npm/l/furaffinity-api">
+  </a>
 
-This project can only be used with Furaffinity's **Modern** style.
+</div>
 
-## Usage
+> **Important:** This project can only be used with Furaffinity's **Modern** style.
 
-Login to furaffinity:
+## Installation
 
-```javascript
+```bash
+npm install furaffinity-api
+```
+
+## APIs
+
+### Login(a: string, b: string)
+
+Login to furaffinity use cookies
+
+```js
 import { Login } from "furaffinity-api";
 // or
-let { Login } = require("furaffinity-api");
+const { Login } = require("furaffinity-api");
 
 // to allow all results to be accessible, add your cookies
 Login("cookie_a", "cookie_b");
 ```
 
+### Search(query: string, options: SearchOptions)
+
 Searching for content:
 
-```javascript
+```js
 import { Search, Type } from 'furaffinity-api';
 
 Search('search query', { /** SearchOptions */ type?, rating?, page? }).then(res => {
@@ -32,9 +55,26 @@ Search('search query', { /** SearchOptions */ type?, rating?, page? }).then(res 
 });
 ```
 
+### Browse(options?: BrowseOptions)
+
+Get results from Browse page:
+
+```js
+import { Browse } from "furaffinity-api";
+
+Browse({ /** BrowseOptions */ }).then(res => {
+  // res is an array of Result(s)
+  res[0].getSubmission().then(submission => {
+    // submission is a Submission
+  });
+});
+```
+
+### Submission(id: string)
+
 Looking up a specific submission:
 
-```javascript
+```js
 import { Submission } from "furaffinity-api";
 
 Submission("1234567890").then(res => {
@@ -42,12 +82,26 @@ Submission("1234567890").then(res => {
 });
 ```
 
+### User()
+
+Get information of current logged in user:
+
+```js
+import { User } from "furaffinity-api";
+
+User().then(user => {
+  // console.log(user);
+})
+```
+
+### Author(id: string)
+
 Get information of an author:
 
-```javascript
+```js
 import { Author, WatchingList } from "furaffinity-api";
 
-Author("username").then(res => {
+Author("user_id").then(res => {
   // res is an Author
   // Author has id, name, url and avatar(maybe undefined)
   WatchingList(res.id).then(list => {
@@ -55,3 +109,52 @@ Author("username").then(res => {
   });
 });
 ```
+
+### Gallery(id: string)
+
+Get results from someone's gallery:
+
+```js
+import { Gallery } from "furaffinity-api";
+
+Gallery("author_id").then(res => {
+  // res is an array of Result(s)
+  res[0].getSubmission().then(submission => {
+    // submission is a Submission
+  });
+});
+```
+
+### Scraps(id: string)
+
+Get results from someone's scraps:
+
+```js
+import { Scraps } from "furaffinity-api";
+
+Scraps("author_id").then(res => {
+  // res is an array of Result(s)
+  res[0].getSubmission().then(submission => {
+    // submission is a Submission
+  });
+});
+```
+
+### WatchingList(id: string)
+
+Get all watching authors of an author:
+
+```js
+import { WatchingList } from "furaffinity-api";
+
+WatchingList("author_id").then(list => {
+  // list is an Author array
+});
+```
+
+## Special Thanks
+
+- [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api is fork from this project. 
+
+## License
+ICS

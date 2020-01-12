@@ -154,7 +154,7 @@ WatchingList("author_id").then(list => {
 
 ## Special Thanks
 
-- [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api is fork from this project. 
+- [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api is based on this project. 
 
 ## License
 ICS

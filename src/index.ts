@@ -1,4 +1,4 @@
-import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList } from "./Request";
+import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps } from "./Request";
 import { ParseFigures, ParseSubmission, ParseAuthor, ParseWatchingList } from './Parser';
 import { Author, Result, Submission } from './interfaces';
 
@@ -38,6 +38,24 @@ export async function Submission(id: string): Promise<Submission> {
  */
 export async function Author(id: string): Promise<Author> {
 	return ParseAuthor(await FetchAuthor(id));
+}
+
+/**
+ * Get results of a gallery page
+ * @param id author id
+ * @param page page number
+ */
+export async function Gallery(id: string, page: number): Promise<Result[]> {
+	return ParseFigures(await FetchGallery(id, page));
+}
+
+/**
+ * Get results of a scraps page
+ * @param id author id
+ * @param page page number
+ */
+export async function Scraps(id: string, page: number): Promise<Result[]> {
+	return ParseFigures(await FetchScraps(id, page));
 }
 
 /**

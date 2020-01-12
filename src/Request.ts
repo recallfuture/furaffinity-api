@@ -1,4 +1,4 @@
-const ENDPOINT = 'http://www.furaffinity.net/';
+const ENDPOINT = 'http://www.furaffinity.net';
 import axios from 'axios';
 import { Rating, SearchType, Category, Tag, Species, Gender } from './Enums';
 
@@ -37,7 +37,7 @@ export async function FetchIndex(): Promise<string> {
 }
 
 export async function FetchSearch(query: string, options?: SearchOptions): Promise<string> {
-	const res = await axios.post(ENDPOINT + 'search/?q=' + encodeURIComponent(query), {
+	const res = await axios.post(ENDPOINT + '/search/?q=' + encodeURIComponent(query), {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
 		} : {},
@@ -69,7 +69,7 @@ export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
 		species: 1,
 		gender: 1
 	}, options);
-	const res = await axios.post(ENDPOINT + 'browse', {
+	const res = await axios.post(ENDPOINT + '/browse', {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
 		} : {},
@@ -90,8 +90,28 @@ export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
 	return res.data as string;
 }
 
+export async function FetchGallery(id: string, page: number = 1): Promise<string> {
+	const res = await axios.get(`${ENDPOINT}/gallery/${id}/${page}`, {
+		headers: COOKIES.loggedIn ? {
+			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
+		} : {}
+	});
+	if (res.status != 200) throw new Error("Status code not 200; got " + res.status);
+	return res.data as string;
+}
+
+export async function FetchScraps(id: string, page: number = 1): Promise<string> {
+	const res = await axios.get(`${ENDPOINT}/scraps/${id}/${page}`, {
+		headers: COOKIES.loggedIn ? {
+			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
+		} : {}
+	});
+	if (res.status != 200) throw new Error("Status code not 200; got " + res.status);
+	return res.data as string;
+}
+
 export async function FetchSubmission(id: string): Promise<string> {
-	const res = await axios.get(ENDPOINT + 'view/' + id, {
+	const res = await axios.get(ENDPOINT + '/view/' + id, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
 		} : {}
@@ -101,7 +121,7 @@ export async function FetchSubmission(id: string): Promise<string> {
 }
 
 export async function FetchAuthor(id: string): Promise<string> {
-	const res = await axios.get(ENDPOINT + 'user/' + id, {
+	const res = await axios.get(ENDPOINT + '/user/' + id, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
 		} : {}
@@ -111,7 +131,7 @@ export async function FetchAuthor(id: string): Promise<string> {
 }
 
 export async function FetchWatchingList(id: string, page: number = 1): Promise<string> {
-	const res = await axios.get(`${ENDPOINT}watchlist/by/${id}/${page}`, {
+	const res = await axios.get(`${ENDPOINT}/watchlist/by/${id}/${page}`, {
 		headers: COOKIES.loggedIn ? {
 			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
 		} : {}

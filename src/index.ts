@@ -1,5 +1,5 @@
-import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps } from "./Request";
-import { ParseFigures, ParseSubmission, ParseAuthor, ParseWatchingList } from './Parser';
+import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps, FetchIndex } from "./Request";
+import { ParseFigures, ParseSubmission, ParseAuthor, ParseWatchingList, ParseUser } from './Parser';
 import { Author, Result, Submission } from './interfaces';
 
 export * from "./Enums";
@@ -30,6 +30,13 @@ export async function Browse(options?: BrowseOptions): Promise<Result[]> {
  */
 export async function Submission(id: string): Promise<Submission> {
 	return ParseSubmission(await FetchSubmission(id), id);
+}
+
+/**
+ * Get the current logged in user
+ */
+export async function User(): Promise<Author | null> {
+	return ParseUser(await FetchIndex());
 }
 
 /**

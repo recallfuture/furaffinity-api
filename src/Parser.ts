@@ -167,6 +167,30 @@ export function ParseAuthor(body: string): Author {
 }
 
 /**
+ * Get the current logged in user
+ * @param body HTML document
+ */
+export function ParseUser(body: string): Author | null {
+	const $ = cheerio.load(body);
+
+	if ($("#my-username").length === 0) {
+		return null;
+	}
+
+	const name: string = $("#my-username")[1].childNodes[0].data?.trim() ?? "";
+	const id: string = convertNameToId(name);
+	const url: string = 'http://www.furaffinity.net/user/' + id;
+	const avatar: string = "http:" + $(".loggedin_user_avatar")[0].attribs.src;
+
+	return {
+		id,
+		name,
+		url,
+		avatar
+	}
+}
+
+/**
  * Get all Author's info from peer page of watching list
  * @param body HTML document
  */

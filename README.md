@@ -157,4 +157,4 @@ WatchingList("author_id").then(list => {
 - [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api is based on this project. 
 
 ## License
-ICS
+ISC

@@ -20,6 +20,15 @@ function classNames(element: CheerioElement): string[] {
 	return element.attribs.class.split(" ");
 }
 
+function checkSystemMessage($: CheerioStatic) {
+	// Check system message
+	const noticeMessage = $('section.notice-message');
+	if (noticeMessage.length !== 0) {
+		const systemMessage = noticeMessage[0].childNodes[1].childNodes[3].childNodes[0].nodeValue;
+		throw new Error(systemMessage);
+	}
+}
+
 /**
  * Parse result from figure element
  * @param figure CheerioElement
@@ -74,12 +83,7 @@ export function ParseFigures(body: string): Result[] {
 export function ParseSubmission(body: string, id: string): Submission {
 	const $ = cheerio.load(body);
 
-	// Check system message
-	const noticeMessage = $('section.notice-message');
-	if (noticeMessage.length !== 0) {
-		const systemMessage = noticeMessage[0].childNodes[1].childNodes[3].childNodes[0].nodeValue;
-		throw new Error(systemMessage);
-	}
+	checkSystemMessage($);
 
 	// Get main nodes
 	const main = $('#columnpage');
@@ -153,6 +157,8 @@ export function ParseSubmission(body: string, id: string): Submission {
 export function ParseAuthor(body: string): Author {
 	const $ = cheerio.load(body);
 
+	checkSystemMessage($);
+
 	const name: string = $('.userpage-flex-item.username span')[0].childNodes[0].data?.trim().slice(1) ?? "";
 	const id: string = convertNameToId(name);
 	const url: string = 'http://www.furaffinity.net/user/' + id;
@@ -172,6 +178,8 @@ export function ParseAuthor(body: string): Author {
  */
 export function ParseUser(body: string): Author | null {
 	const $ = cheerio.load(body);
+
+	checkSystemMessage($);
 
 	if ($("#my-username").length === 0) {
 		return null;
@@ -196,6 +204,8 @@ export function ParseUser(body: string): Author | null {
  */
 export function ParseWatchingList(body: string): Author[] {
 	const $ = cheerio.load(body);
+
+	checkSystemMessage($);
 
 	return $('.watch-list-items a').map((index, a) => {
 		const name = a.childNodes[0].data?.trim() ?? "";

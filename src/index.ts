@@ -5,7 +5,7 @@ import { Author, Result, Submission } from './interfaces';
 export * from "./Enums";
 export * from "./interfaces";
 
-export { Login } from './Request';
+export { Login, SetProxy } from './Request';
 
 /**
  * Get results from search page

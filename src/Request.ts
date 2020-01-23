@@ -1,5 +1,5 @@
 const ENDPOINT = 'http://www.furaffinity.net';
-import axios from 'axios';
+import axios, { AxiosProxyConfig } from 'axios';
 import { Rating, SearchType, Category, Tag, Species, Gender } from './Enums';
 
 axios.defaults.timeout = 10000;
@@ -9,6 +9,10 @@ export function Login(cookieA: string, cookieB: string) {
 	COOKIES.loggedIn = true;
 	COOKIES.a = cookieA;
 	COOKIES.b = cookieB;
+}
+
+export function SetProxy(config?: false | AxiosProxyConfig) {
+	axios.defaults.proxy = config;
 }
 
 export interface SearchOptions {

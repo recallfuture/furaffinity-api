@@ -21,7 +21,7 @@ export interface Result {
 		large: string
 	},
 	author: Author,
-	getSubmission(): Promise<Submission>
+	getSubmission(): Promise<Submission | null>
 };
 
 export interface Submission {

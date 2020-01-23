@@ -2,7 +2,6 @@ import cheerio from 'cheerio';
 import { SubmissionType, Species, Category, Gender, Rating } from './Enums';
 import { Author, Result, Submission } from './interfaces';
 import { Submission as GetSubmission } from '.';
-import { FetchWatchingList } from './Request';
 
 /**
  * Convert author name to author id

@@ -12,39 +12,64 @@ export { Login } from './Request';
  * @param query search query
  * @param options search options
  */
-export async function Search(query: string, options?: SearchOptions): Promise<Result[]> {
-	return ParseFigures(await FetchSearch(query, options));
+export async function Search(query: string, options?: SearchOptions): Promise<Result[] | null> {
+	try {
+		return ParseFigures(await FetchSearch(query, options));
+	} catch (e) {
+		console.error('furaffinity-api: ', e);
+		return null;
+	}
 }
 
 /**
  * Get results from browse page
  * @param options browse options
  */
-export async function Browse(options?: BrowseOptions): Promise<Result[]> {
-	return ParseFigures(await FetchBrowse(options));
+export async function Browse(options?: BrowseOptions): Promise<Result[] | null> {
+	try {
+		return ParseFigures(await FetchBrowse(options));
+	} catch (e) {
+		console.error('furaffinity-api: ', e);
+		return null;
+	}
 }
 
 /**
  * Get submission's info by pass submission id
  * @param id submission id
  */
-export async function Submission(id: string): Promise<Submission> {
-	return ParseSubmission(await FetchSubmission(id), id);
+export async function Submission(id: string): Promise<Submission | null> {
+	try {
+		return ParseSubmission(await FetchSubmission(id), id);
+	} catch (e) {
+		console.error('furaffinity-api: ', e);
+		return null;
+	}
 }
 
 /**
  * Get the current logged in user
  */
 export async function User(): Promise<Author | null> {
-	return ParseUser(await FetchIndex());
+	try {
+		return ParseUser(await FetchIndex());
+	} catch (e) {
+		console.error('furaffinity-api: ', e);
+		return null;
+	}
 }
 
 /**
  * Get author's info by pass author id
  * @param id author id
  */
-export async function Author(id: string): Promise<Author> {
-	return ParseAuthor(await FetchAuthor(id));
+export async function Author(id: string): Promise<Author | null> {
+	try {
+		return ParseAuthor(await FetchAuthor(id));
+	} catch (e) {
+		console.error('furaffinity-api: ', e);
+		return null;
+	}
 }
 
 /**
@@ -52,8 +77,13 @@ export async function Author(id: string): Promise<Author> {
  * @param id author id
  * @param page page number
  */
-export async function Gallery(id: string, page: number): Promise<Result[]> {
-	return ParseFigures(await FetchGallery(id, page));
+export async function Gallery(id: string, page: number): Promise<Result[] | null> {
+	try {
+		return ParseFigures(await FetchGallery(id, page));
+	} catch (e) {
+		console.error('furaffinity-api: ', e);
+		return null;
+	}
 }
 
 /**
@@ -61,24 +91,34 @@ export async function Gallery(id: string, page: number): Promise<Result[]> {
  * @param id author id
  * @param page page number
  */
-export async function Scraps(id: string, page: number): Promise<Result[]> {
-	return ParseFigures(await FetchScraps(id, page));
+export async function Scraps(id: string, page: number): Promise<Result[] | null> {
+	try {
+		return ParseFigures(await FetchScraps(id, page));
+	} catch (e) {
+		console.error('furaffinity-api: ', e);
+		return null;
+	}
 }
 
 /**
  * Get an author's watching list
  * @param id author id
  */
-export async function WatchingList(id: string): Promise<Author[]> {
+export async function WatchingList(id: string): Promise<Author[] | null> {
 	let result: Author[] = [];
 	let page = 1;
 
-	while (true) {
-		const users = ParseWatchingList(await FetchWatchingList(id, page++));
-		result = [...result, ...users];
-		if (users.length === 0 || users.length < 200) {
-			break;
+	try {
+		while (true) {
+			const users = ParseWatchingList(await FetchWatchingList(id, page++));
+			result = [...result, ...users];
+			if (users.length === 0 || users.length < 200) {
+				break;
+			}
 		}
+	} catch (e) {
+		console.error('furaffinity-api: ', e);
+		return null;
 	}
 
 	return result;

@@ -32,7 +32,7 @@ function checkSystemMessage($: CheerioStatic) {
  * Parse result from figure element
  * @param figure CheerioElement
  */
-export function ParseFigure(figure: CheerioElement): Result {
+export function ParseFigure(figure: CheerioElement, author?: Author): Result {
 	const id: string = figure.attribs.id.split('-').pop() ?? "";
 	const thumb: string = 'http:' + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attribs.src;
 
@@ -49,7 +49,7 @@ export function ParseFigure(figure: CheerioElement): Result {
 			medium: thumb.replace(/@\d+?-/g, '@800-'),
 			large: thumb.replace(/@\d+?-/g, '@1600-')
 		},
-		author: {
+		author: author ?? {
 			id: classNames(figure)[2].slice(2),
 			url: 'https://www.furaffinity.net/user/' + classNames(figure)[2].slice(2),
 			name: figure.childNodes[1].childNodes[1].childNodes[2].childNodes[0].nodeValue.trim()
@@ -67,9 +67,15 @@ export function ParseFigure(figure: CheerioElement): Result {
 export function ParseFigures(body: string): Result[] {
 	const $ = cheerio.load(body);
 
+	let author: Author | undefined;
+	try {
+		author = ParseAuthor(body);
+	} catch (e) {
+	}
+
 	const results: Result[] = [];
 	$("figure").each((index, figure) => {
-		results.push(ParseFigure(figure));
+		results.push(ParseFigure(figure, author));
 	});
 	return results;
 };

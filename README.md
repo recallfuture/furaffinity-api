@@ -62,7 +62,9 @@ Get results from Browse page:
 ```js
 import { Browse } from "furaffinity-api";
 
-Browse({ /** BrowseOptions */ }).then(res => {
+Browse({
+  /** BrowseOptions */
+}).then(res => {
   // res is an array of Result(s)
   res[0].getSubmission().then(submission => {
     // submission is a Submission
@@ -91,7 +93,7 @@ import { User } from "furaffinity-api";
 
 User().then(user => {
   // console.log(user);
-})
+});
 ```
 
 ### Author(id: string)
@@ -142,7 +144,7 @@ Scraps("author_id").then(res => {
 
 ### WatchingList(id: string)
 
-Get all watching authors of an author:
+Get all watching authors of an author(can't get avatar):
 
 ```js
 import { WatchingList } from "furaffinity-api";
@@ -152,9 +154,22 @@ WatchingList("author_id").then(list => {
 });
 ```
 
+### MyWatchingList()
+
+**Login first**
+Get all watching authors of current login user(can get avatar):
+
+```js
+import { MyWatchingList } from "furaffinity-api";
+
+MyWatchingList().then(list => {
+  // list is an Author array
+});
+
 ## Special Thanks
 
-- [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api is based on this project. 
+- [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api is based on this project.
 
 ## License
 ISC
+```

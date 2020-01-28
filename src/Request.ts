@@ -143,3 +143,13 @@ export async function FetchWatchingList(id: string, page: number = 1): Promise<s
 	if (res.status != 200) throw new Error("Status code not 200; got " + res.status);
 	return res.data as string;
 }
+
+export async function FetchMyWatchingList(page: number = 1): Promise<string> {
+	const res = await axios.get(`${ENDPOINT}/controls/buddylist/${page}`, {
+		headers: COOKIES.loggedIn ? {
+			Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
+		} : {}
+	});
+	if (res.status != 200) throw new Error("Status code not 200; got " + res.status);
+	return res.data as string;
+}

@@ -1,5 +1,5 @@
-import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps, FetchIndex } from "./Request";
-import { ParseFigures, ParseSubmission, ParseAuthor, ParseWatchingList, ParseUser } from './Parser';
+import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps, FetchIndex, FetchMyWatchingList } from "./Request";
+import { ParseFigures, ParseSubmission, ParseAuthor, ParseWatchingList, ParseUser, ParseMyWatchingList } from './Parser';
 import { Author, Result, Submission } from './interfaces';
 
 export * from "./Enums";
@@ -102,6 +102,7 @@ export async function Scraps(id: string, page: number): Promise<Result[] | null>
 
 /**
  * Get an author's watching list
+ * result don't has avatar
  * @param id author id
  */
 export async function WatchingList(id: string): Promise<Author[] | null> {
@@ -113,6 +114,31 @@ export async function WatchingList(id: string): Promise<Author[] | null> {
 			const users = ParseWatchingList(await FetchWatchingList(id, page++));
 			result = [...result, ...users];
 			if (users.length === 0 || users.length < 200) {
+				break;
+			}
+		}
+	} catch (e) {
+		console.error('furaffinity-api: ', e);
+		return null;
+	}
+
+	return result;
+}
+
+/**
+ * Get current login user's watching list
+ * this can only use after login
+ * result has avatar
+ */
+export async function MyWatchingList(): Promise<Author[] | null> {
+	let result: Author[] = [];
+	let page = 1;
+
+	try {
+		while (true) {
+			const users = ParseMyWatchingList(await FetchMyWatchingList(page++));
+			result = [...result, ...users];
+			if (users.length === 0 || users.length < 64) {
 				break;
 			}
 		}

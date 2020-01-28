@@ -235,7 +235,7 @@ export function ParseMyWatchingList(body: string): Author[] {
 
 	return $('.flex-item-watchlist').map((index, div) => {
 		const avatar = 'http:' + $(div).find("img.avatar")[0].attribs.src;
-		const name = $(div).find(".flex-item-watchlist-controls a strong")[0].data?.trim() ?? "";
+		const name = $(div).find(".flex-item-watchlist-controls a strong")[0].childNodes[0].data?.trim() ?? "";
 		const id = convertNameToId(name);
 		const url = 'http://www.furaffinity.net/user/' + id;
 		return {

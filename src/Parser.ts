@@ -39,7 +39,7 @@ export function ParseFigure(figure: CheerioElement, author?: Author): Result {
 	return {
 		type: SubmissionType[classNames(figure)[1].split('-').pop() as keyof typeof SubmissionType],
 		id,
-		title: figure.childNodes[1].childNodes[0].childNodes[0].childNodes[0].nodeValue.trim(),
+		title: figure.childNodes[1].childNodes[0].childNodes[0].childNodes[0]?.nodeValue ?? "",
 		url: 'https://www.furaffinity.net/view/' + id,
 		rating: Rating[classNames(figure)[0].split('-').pop()?.replace(/^[a-z]/, ($1: string) => $1.toUpperCase()) as keyof typeof Rating],
 		thumb: {

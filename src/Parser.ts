@@ -8,7 +8,7 @@ import { Submission as GetSubmission } from '.';
  * @param name author name
  */
 function convertNameToId(name: string): string {
-	return name.trim().replace('_', '').toLowerCase();
+	return name.trim().split("_").join("").toLowerCase();
 }
 
 /**

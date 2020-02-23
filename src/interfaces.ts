@@ -5,6 +5,7 @@ export interface Author {
 	name: string,
 	url: string,
 	avatar?: string,
+	shinies?: boolean,
 }
 
 export interface Result {

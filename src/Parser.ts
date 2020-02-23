@@ -109,6 +109,7 @@ export function ParseSubmission(body: string, id: string): Submission {
 	const authorId: string = convertNameToId(authorName);
 	const posted: string = content.find('.submission-id-sub-container strong span')[0].attribs.title;
 	const authorAvatar: string = "http:" + content.find('.submission-id-avatar img')[0].attribs.src;
+	const authorShinies: boolean = (!!$('.shinies-promo'));
 
 	// stats
 	const rating: Rating = Rating[stats.find('.rating span')[0].childNodes[0].data?.trim() as keyof typeof Rating];
@@ -136,7 +137,8 @@ export function ParseSubmission(body: string, id: string): Submission {
 			id: authorId,
 			name: authorName,
 			url: 'http://www.furaffinity.net/user/' + authorId,
-			avatar: authorAvatar
+			avatar: authorAvatar,
+			shinies: authorShinies,
 		},
 		content: {
 			category,
@@ -167,6 +169,7 @@ export function ParseAuthor(body: string): Author {
 	const name: string = $('.userpage-flex-item.username span')[0].childNodes[0].data?.trim().slice(1) ?? "";
 	const id: string = convertNameToId(name);
 	const url: string = 'http://www.furaffinity.net/user/' + id;
+	const shinies: boolean = (!!$('.userpage-layout-left-col-content > a:nth-child(4)'));
 	const avatar: string = 'http:' + $('.user-nav-avatar')[0].attribs.src;
 
 	return {
@@ -174,6 +177,7 @@ export function ParseAuthor(body: string): Author {
 		name,
 		url,
 		avatar,
+		shinies,
 	};
 }
 
@@ -193,12 +197,14 @@ export function ParseUser(body: string): Author | null {
 	const name: string = $("#my-username")[1].childNodes[0].data?.trim() ?? "";
 	const id: string = convertNameToId(name);
 	const url: string = 'http://www.furaffinity.net/user/' + id;
+	const shinies: boolean = (!!$('.userpage-layout-left-col-content > a:nth-child(4)'));
 	const avatar: string = "http:" + $(".loggedin_user_avatar")[0].attribs.src;
 
 	return {
 		id,
 		name,
 		url,
+		shinies,
 		avatar
 	}
 }

@@ -102,7 +102,7 @@ export function ParseSubmission(body: string, id: string): Submission {
 
 	// buttons
 	let downloadUrl: string = `http:${sidebar.find('.buttons .download a')[0].attribs.href}`;
-	const favLink: string = `$http://furaffinity.net/${sidebar.find('.buttons .fav a')[0].attribs.href}`;
+	const favLink: string = `http://furaffinity.net${sidebar.find('.buttons .fav a')[0].attribs.href}`;
 	console.log(downloadUrl);
 
 	// header

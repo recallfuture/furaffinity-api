@@ -1,6 +1,6 @@
 {
   "name": "radars-furaffinity-api",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "description": "FurAffinity wrapper for Node.js",
   "main": "src/index.ts",
   "scripts": {

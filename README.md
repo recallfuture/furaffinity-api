@@ -2,7 +2,7 @@
   radars-furaffinity-api
 </h1>
 
-<h5 align="center">FurAffinity wrapper for Node.js base on <a href="https://www.npmjs.com/package/furaffinity-api">this wrapper</a></h5>
+<h5 align="center">FurAffinity wrapper for Node.js based on <a href="https://www.npmjs.com/package/furaffinity-api">this wrapper</a></h5>
 
 <h5 align="center">
 Stats are for the <a href="https://github.com/recallfuture/furaffinity-api">base branch</a>!

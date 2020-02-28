@@ -31,6 +31,7 @@ export interface Submission {
 	title: string,
 	posted: number,
 	rating: Rating,
+	favLink: string,
 	author: Author,
 	content: {
 		category: Category,
@@ -43,5 +44,6 @@ export interface Submission {
 		views: Number
 	},
 	downloadUrl: string,
+	previewUrl?: string,
 	keywords: string[]
 };

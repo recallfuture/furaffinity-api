@@ -1,9 +1,9 @@
-import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps, FetchIndex, FetchMyWatchingList } from "./Request";
+import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps, FetchIndex, FetchMyWatchingList } from './Request';
 import { ParseFigures, ParseSubmission, ParseAuthor, ParseWatchingList, ParseUser, ParseMyWatchingList } from './Parser';
 import { Author, Result, Submission } from './interfaces';
 
-export * from "./Enums";
-export * from "./interfaces";
+export * from './Enums';
+export * from './interfaces';
 
 export { Login, SetProxy } from './Request';
 
@@ -52,7 +52,8 @@ export async function Submission(id: string): Promise<Submission | null> {
  */
 export async function User(): Promise<Author | null> {
 	try {
-		return ParseUser(await FetchIndex());
+		const body = await FetchIndex();
+		return ParseUser(body);
 	} catch (e) {
 		console.error('furaffinity-api: ', e);
 		return null;

@@ -45,5 +45,6 @@ export interface Submission {
 	},
 	downloadUrl: string,
 	previewUrl?: string,
-	keywords: string[]
+	keywords: string[],
+	fave(): Promise<void>
 };

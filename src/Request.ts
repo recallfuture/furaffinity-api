@@ -201,6 +201,28 @@ export async function FetchSubmission(id: string): Promise<string> {
 	});
 }
 
+export async function FaveSubmission(favLink: string): Promise<void> {
+	return await new Promise((resolve, reject) => {
+		cloudscraper({
+			url: favLink,
+			headers: COOKIES.loggedIn ? {
+				Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
+			} : {}
+		}, (error: any, response: Response, body: string) => {
+			if (error) {
+				console.error(error);
+				reject();
+			}
+			if(response.statusCode !== 200) {
+				console.error(`${response.statusCode}: `, response.statusMessage);
+				reject();
+			}
+	
+			resolve();
+		});
+	})
+}
+
 export async function FetchAuthor(id: string): Promise<string> {
 	const url = `${ENDPOINT}/user/${id}`;
 	return await new Promise((resolve, reject) => {

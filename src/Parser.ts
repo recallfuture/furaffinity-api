@@ -2,6 +2,7 @@ import cheerio from 'cheerio';
 import { SubmissionType, Species, Category, Gender, Rating } from './Enums';
 import { Author, Result, Submission } from './interfaces';
 import { Submission as GetSubmission } from '.';
+import { FaveSubmission } from './Request';
 
 /**
  * Convert author name to author id
@@ -161,7 +162,10 @@ export function ParseSubmission(body: string, id: string): Submission {
 		previewUrl,
 		keywords: tags.map((index, tag) => {
 			return tag.childNodes[0].data?.trim() ?? '';
-		}).get()
+		}).get(),
+		fave: async () => {
+			await FaveSubmission(favLink);
+		}
 	};
 };
 

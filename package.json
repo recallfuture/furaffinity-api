@@ -1,11 +1,12 @@
 {
   "name": "radars-furaffinity-api",
-  "version": "3.5.1",
+  "version": "3.5.2",
   "description": "FurAffinity wrapper for Node.js",
   "main": "src/index.ts",
   "scripts": {
     "test": "mocha -r ts-node/register src/test/*.spec.ts",
-    "dev": "tsc-watch --compiler typescript/bin/tsc"
+    "dev": "tsc-watch --compiler typescript/bin/tsc",
+    "build-ts:win": "rmdir dist /s /q && tsc"
   },
   "repository": {
     "type": "git",

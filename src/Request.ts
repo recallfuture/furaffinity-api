@@ -1,4 +1,4 @@
-const ENDPOINT = 'http://www.furaffinity.net';
+const ENDPOINT = 'https://www.furaffinity.net';
 import axios, { AxiosProxyConfig } from 'axios';
 import { Rating, SearchType, Category, Tag, Species, Gender } from './Enums';
 

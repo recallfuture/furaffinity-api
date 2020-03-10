@@ -34,7 +34,7 @@ function checkSystemMessage($: CheerioStatic) {
  */
 export function ParseFigure(figure: CheerioElement, author?: Author): Result {
 	const id: string = figure.attribs.id.split('-').pop() ?? "";
-	const thumb: string = 'http:' + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attribs.src;
+	const thumb: string = 'https:' + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attribs.src;
 
 	return {
 		type: SubmissionType[classNames(figure)[1].split('-').pop() as keyof typeof SubmissionType],
@@ -100,7 +100,7 @@ export function ParseSubmission(body: string, id: string): Submission {
 	const tags = sidebar.find('.tags-row .tags a');
 
 	// buttons
-	let downloadUrl: string = 'http:' + sidebar.find('.buttons .download a')[0].attribs.href;
+	let downloadUrl: string = 'https:' + sidebar.find('.buttons .download a')[0].attribs.href;
 	console.log(downloadUrl);
 
 	// header
@@ -108,7 +108,7 @@ export function ParseSubmission(body: string, id: string): Submission {
 	const authorName: string = content.find('.submission-id-sub-container a strong')[0].childNodes[0].data?.trim() ?? "";
 	const authorId: string = convertNameToId(authorName);
 	const posted: string = content.find('.submission-id-sub-container strong span')[0].attribs.title;
-	const authorAvatar: string = "http:" + content.find('.submission-id-avatar img')[0].attribs.src;
+	const authorAvatar: string = "https:" + content.find('.submission-id-avatar img')[0].attribs.src;
 
 	// stats
 	const rating: Rating = Rating[stats.find('.rating span')[0].childNodes[0].data?.trim() as keyof typeof Rating];
@@ -128,14 +128,14 @@ export function ParseSubmission(body: string, id: string): Submission {
 
 	return {
 		id,
-		url: 'http://www.furaffinity.net/view/' + id,
+		url: 'https://www.furaffinity.net/view/' + id,
 		title: title,
 		posted: Date.parse(posted),
 		rating: rating,
 		author: {
 			id: authorId,
 			name: authorName,
-			url: 'http://www.furaffinity.net/user/' + authorId,
+			url: 'https://www.furaffinity.net/user/' + authorId,
 			avatar: authorAvatar
 		},
 		content: {
@@ -166,8 +166,8 @@ export function ParseAuthor(body: string): Author {
 
 	const name: string = $('.userpage-flex-item.username span')[0].childNodes[0].data?.trim().slice(1) ?? "";
 	const id: string = convertNameToId(name);
-	const url: string = 'http://www.furaffinity.net/user/' + id;
-	const avatar: string = 'http:' + $('.user-nav-avatar')[0].attribs.src;
+	const url: string = 'https://www.furaffinity.net/user/' + id;
+	const avatar: string = 'https:' + $('.user-nav-avatar')[0].attribs.src;
 
 	return {
 		id,
@@ -192,8 +192,8 @@ export function ParseUser(body: string): Author | null {
 
 	const name: string = $("#my-username")[1].childNodes[0].data?.trim() ?? "";
 	const id: string = convertNameToId(name);
-	const url: string = 'http://www.furaffinity.net/user/' + id;
-	const avatar: string = "http:" + $(".loggedin_user_avatar")[0].attribs.src;
+	const url: string = 'https://www.furaffinity.net/user/' + id;
+	const avatar: string = "https:" + $(".loggedin_user_avatar")[0].attribs.src;
 
 	return {
 		id,
@@ -215,7 +215,7 @@ export function ParseWatchingList(body: string): Author[] {
 	return $('.watch-list-items a').map((index, a) => {
 		const name = a.childNodes[0].data?.trim() ?? "";
 		const id = convertNameToId(name);
-		const url = 'http://www.furaffinity.net/user/' + id;
+		const url = 'https://www.furaffinity.net/user/' + id;
 		return {
 			id,
 			name,
@@ -234,10 +234,10 @@ export function ParseMyWatchingList(body: string): Author[] {
 	checkSystemMessage($);
 
 	return $('.flex-item-watchlist').map((index, div) => {
-		const avatar = 'http:' + $(div).find("img.avatar")[0].attribs.src;
+		const avatar = 'https:' + $(div).find("img.avatar")[0].attribs.src;
 		const name = $(div).find(".flex-item-watchlist-controls a strong")[0].childNodes[0].data?.trim() ?? "";
 		const id = convertNameToId(name);
-		const url = 'http://www.furaffinity.net/user/' + id;
+		const url = 'https://www.furaffinity.net/user/' + id;
 		return {
 			id,
 			name,

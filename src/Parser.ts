@@ -23,6 +23,7 @@ function checkSystemMessage($: CheerioStatic) {
 	// Check system message
 	const noticeMessage = $('section.notice-message');
 	if (noticeMessage.length !== 0) {
+		console.log(noticeMessage.html());
 		const systemMessage = noticeMessage[0].childNodes[1].childNodes[3].childNodes[0].nodeValue;
 		throw new Error(systemMessage);
 	}
@@ -104,7 +105,7 @@ export function ParseSubmission(body: string, id: string): Submission {
 	console.log(downloadUrl);
 
 	// header
-	const title: string = content.find('.submission-id-sub-container .submission-title p')[0].childNodes[0].data?.trim() ?? "";
+	const title: string = content.find('.submission-id-sub-container .submission-title p')[0].childNodes[0]?.data?.trim() ?? "";
 	const authorName: string = content.find('.submission-id-sub-container a strong')[0].childNodes[0].data?.trim() ?? "";
 	const authorId: string = convertNameToId(authorName);
 	const posted: string = content.find('.submission-id-sub-container strong span')[0].attribs.title;

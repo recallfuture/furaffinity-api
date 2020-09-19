@@ -5,6 +5,7 @@ export interface Author {
 	name: string,
 	url: string,
 	avatar?: string,
+	shinies?: boolean,
 }
 
 export interface Result {
@@ -30,6 +31,7 @@ export interface Submission {
 	title: string,
 	posted: number,
 	rating: Rating,
+	favLink: string,
 	author: Author,
 	content: {
 		category: Category,
@@ -42,5 +44,7 @@ export interface Submission {
 		views: Number
 	},
 	downloadUrl: string,
-	keywords: string[]
+	previewUrl?: string,
+	keywords: string[],
+	fave(): Promise<void>
 };

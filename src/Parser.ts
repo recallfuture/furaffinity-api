@@ -2,13 +2,14 @@ import cheerio from 'cheerio';
 import { SubmissionType, Species, Category, Gender, Rating } from './Enums';
 import { Author, Result, Submission } from './interfaces';
 import { Submission as GetSubmission } from '.';
+import { FaveSubmission } from './Request';
 
 /**
  * Convert author name to author id
  * @param name author name
  */
 function convertNameToId(name: string): string {
-	return name.trim().split("_").join("").toLowerCase();
+	return name.trim().split('_').join('').toLowerCase();
 }
 
 /**
@@ -16,7 +17,7 @@ function convertNameToId(name: string): string {
  * @param element CheerioElement
  */
 function classNames(element: CheerioElement): string[] {
-	return element.attribs.class.split(" ");
+	return element.attribs.class.split(' ');
 }
 
 function checkSystemMessage($: CheerioStatic) {
@@ -34,14 +35,14 @@ function checkSystemMessage($: CheerioStatic) {
  * @param figure CheerioElement
  */
 export function ParseFigure(figure: CheerioElement, author?: Author): Result {
-	const id: string = figure.attribs.id.split('-').pop() ?? "";
-	const thumb: string = 'https:' + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attribs.src;
+	const id: string = figure.attribs.id.split('-').pop() ?? '';
+	const thumb: string = 'http:' + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attribs.src;
 
 	return {
 		type: SubmissionType[classNames(figure)[1].split('-').pop() as keyof typeof SubmissionType],
 		id,
-		title: figure.childNodes[1].childNodes[0].childNodes[0].childNodes[0]?.nodeValue ?? "",
-		url: 'https://www.furaffinity.net/view/' + id,
+		title: figure.childNodes[1].childNodes[0].childNodes[0].childNodes[0]?.nodeValue ?? '',
+		url: `https://www.furaffinity.net/view/${id}`,
 		rating: Rating[classNames(figure)[0].split('-').pop()?.replace(/^[a-z]/, ($1: string) => $1.toUpperCase()) as keyof typeof Rating],
 		thumb: {
 			icon: thumb.replace(/@\d+?-/g, '@75-'),
@@ -52,7 +53,7 @@ export function ParseFigure(figure: CheerioElement, author?: Author): Result {
 		},
 		author: author ?? {
 			id: classNames(figure)[2].slice(2),
-			url: 'https://www.furaffinity.net/user/' + classNames(figure)[2].slice(2),
+			url: `https://www.furaffinity.net/user/${classNames(figure)[2].slice(2)}`,
 			name: figure.childNodes[1].childNodes[1].childNodes[2].childNodes[0].nodeValue.trim()
 		},
 		getSubmission: async () => {
@@ -75,7 +76,7 @@ export function ParseFigures(body: string): Result[] {
 	}
 
 	const results: Result[] = [];
-	$("figure").each((index, figure) => {
+	$('figure').each((index, figure) => {
 		results.push(ParseFigure(figure, author));
 	});
 	return results;
@@ -101,21 +102,23 @@ export function ParseSubmission(body: string, id: string): Submission {
 	const tags = sidebar.find('.tags-row .tags a');
 
 	// buttons
-	let downloadUrl: string = 'https:' + sidebar.find('.buttons .download a')[0].attribs.href;
+	let downloadUrl: string = `http:${sidebar.find('.buttons .download a')[0].attribs.href}`;
+	const favLink: string = `http://furaffinity.net${sidebar.find('.buttons .fav a')[0].attribs.href}`;
 	console.log(downloadUrl);
 
 	// header
-	const title: string = content.find('.submission-id-sub-container .submission-title p')[0].childNodes[0]?.data?.trim() ?? "";
-	const authorName: string = content.find('.submission-id-sub-container a strong')[0].childNodes[0].data?.trim() ?? "";
+	const title: string = content.find('.submission-id-sub-container .submission-title p')[0].childNodes[0].data?.trim() ?? '';
+	const authorName: string = content.find('.submission-id-sub-container a strong')[0].childNodes[0].data?.trim() ?? '';
 	const authorId: string = convertNameToId(authorName);
 	const posted: string = content.find('.submission-id-sub-container strong span')[0].attribs.title;
-	const authorAvatar: string = "https:" + content.find('.submission-id-avatar img')[0].attribs.src;
+	const authorAvatar: string = `http:${content.find('.submission-id-avatar img')[0].attribs.src}`;
+	const authorShinies: boolean = (!!$('.shinies-promo'));
 
 	// stats
 	const rating: Rating = Rating[stats.find('.rating span')[0].childNodes[0].data?.trim() as keyof typeof Rating];
-	const favorites: number = Number.parseInt(stats.find('.favorites span')[0].childNodes[0].data?.trim() ?? "");
-	const comments: number = Number.parseInt(stats.find('.comments span')[0].childNodes[0].data?.trim() ?? "");
-	const views: number = Number.parseInt(stats.find('.views span')[0].childNodes[0].data?.trim() ?? "");
+	const favorites: number = Number.parseInt(stats.find('.favorites span')[0].childNodes[0].data?.trim() ?? '');
+	const comments: number = Number.parseInt(stats.find('.comments span')[0].childNodes[0].data?.trim() ?? '');
+	const views: number = Number.parseInt(stats.find('.views span')[0].childNodes[0].data?.trim() ?? '');
 
 	// info
 	const category: Category = Category[info.find('.category-name')[0].childNodes[0].data?.trim() as keyof typeof Category];
@@ -127,17 +130,24 @@ export function ParseSubmission(body: string, id: string): Submission {
 		downloadUrl = downloadUrl.replace('d.facdn.net/download/', 'd.facdn.net/');
 	}
 
+	const previewUrl: string | undefined = 
+		(content.find('.submission-area img').length > 0) 
+		? `http:${content.find('.submission-area img')[0].attribs['data-preview-src']}` 
+		: undefined;
+
 	return {
 		id,
-		url: 'https://www.furaffinity.net/view/' + id,
+		url: `http://www.furaffinity.net/view/${id}`,
 		title: title,
 		posted: Date.parse(posted),
+		favLink,
 		rating: rating,
 		author: {
 			id: authorId,
 			name: authorName,
-			url: 'https://www.furaffinity.net/user/' + authorId,
-			avatar: authorAvatar
+			url: `http://www.furaffinity.net/user/${authorId}`,
+			avatar: authorAvatar,
+			shinies: authorShinies,
 		},
 		content: {
 			category,
@@ -150,9 +160,13 @@ export function ParseSubmission(body: string, id: string): Submission {
 			views
 		},
 		downloadUrl,
+		previewUrl,
 		keywords: tags.map((index, tag) => {
-			return tag.childNodes[0].data?.trim() ?? "";
-		}).get()
+			return tag.childNodes[0].data?.trim() ?? '';
+		}).get(),
+		fave: async () => {
+			await FaveSubmission(favLink);
+		}
 	};
 };
 
@@ -165,16 +179,18 @@ export function ParseAuthor(body: string): Author {
 
 	checkSystemMessage($);
 
-	const name: string = $('.userpage-flex-item.username span')[0].childNodes[0].data?.trim().slice(1) ?? "";
+	const name: string = $('.userpage-flex-item.username span')[0].childNodes[0].data?.trim().slice(1) ?? '';
 	const id: string = convertNameToId(name);
-	const url: string = 'https://www.furaffinity.net/user/' + id;
-	const avatar: string = 'https:' + $('.user-nav-avatar')[0].attribs.src;
+	const url: string = `http://www.furaffinity.net/user/${id}`;
+	const shinies: boolean = (!!$('.userpage-layout-left-col-content > a:nth-child(4)'));
+	const avatar: string = `https:${$('.user-nav-avatar')[0].attribs.src}`;
 
 	return {
 		id,
 		name,
 		url,
 		avatar,
+		shinies,
 	};
 }
 
@@ -187,19 +203,21 @@ export function ParseUser(body: string): Author | null {
 
 	checkSystemMessage($);
 
-	if ($("#my-username").length === 0) {
+	if ($('#my-username').length === 0) {
 		return null;
 	}
 
-	const name: string = $("#my-username")[1].childNodes[0].data?.trim() ?? "";
+	const name: string = $('#my-username')[1].childNodes[0].data?.trim() ?? '';
 	const id: string = convertNameToId(name);
-	const url: string = 'https://www.furaffinity.net/user/' + id;
-	const avatar: string = "https:" + $(".loggedin_user_avatar")[0].attribs.src;
+	const url: string = `https://www.furaffinity.net/user/${id}`;
+	const shinies: boolean = ($('.userpage-layout-left-col-content > a:nth-child(4)').length > 0);
+	const avatar: string = `https:${$('.loggedin_user_avatar')[0].attribs.src}`;
 
 	return {
 		id,
 		name,
 		url,
+		shinies,
 		avatar
 	}
 }
@@ -214,9 +232,10 @@ export function ParseWatchingList(body: string): Author[] {
 	checkSystemMessage($);
 
 	return $('.watch-list-items a').map((index, a) => {
-		const name = a.childNodes[0].data?.trim() ?? "";
+		const name = a.childNodes[0].data?.trim() ?? '';
 		const id = convertNameToId(name);
-		const url = 'https://www.furaffinity.net/user/' + id;
+		const url = `https://www.furaffinity.net/user/${id}`;
+
 		return {
 			id,
 			name,
@@ -235,10 +254,11 @@ export function ParseMyWatchingList(body: string): Author[] {
 	checkSystemMessage($);
 
 	return $('.flex-item-watchlist').map((index, div) => {
-		const avatar = 'https:' + $(div).find("img.avatar")[0].attribs.src;
-		const name = $(div).find(".flex-item-watchlist-controls a strong")[0].childNodes[0].data?.trim() ?? "";
+		const avatar = `https:${$(div).find('img.avatar')[0].attribs.src}`;
+		const name = $(div).find('.flex-item-watchlist-controls a strong')[0].childNodes[0].data?.trim() ?? '';
 		const id = convertNameToId(name);
-		const url = 'https://www.furaffinity.net/user/' + id;
+		const url = `https://www.furaffinity.net/user/${id}`;
+
 		return {
 			id,
 			name,

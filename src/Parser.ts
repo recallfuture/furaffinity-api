@@ -24,6 +24,7 @@ function checkSystemMessage($: CheerioStatic) {
 	// Check system message
 	const noticeMessage = $('section.notice-message');
 	if (noticeMessage.length !== 0) {
+		console.log(noticeMessage.html());
 		const systemMessage = noticeMessage[0].childNodes[1].childNodes[3].childNodes[0].nodeValue;
 		throw new Error(systemMessage);
 	}
@@ -182,7 +183,7 @@ export function ParseAuthor(body: string): Author {
 	const id: string = convertNameToId(name);
 	const url: string = `http://www.furaffinity.net/user/${id}`;
 	const shinies: boolean = (!!$('.userpage-layout-left-col-content > a:nth-child(4)'));
-	const avatar: string = `http:${$('.user-nav-avatar')[0].attribs.src}`;
+	const avatar: string = `https:${$('.user-nav-avatar')[0].attribs.src}`;
 
 	return {
 		id,
@@ -208,9 +209,9 @@ export function ParseUser(body: string): Author | null {
 
 	const name: string = $('#my-username')[1].childNodes[0].data?.trim() ?? '';
 	const id: string = convertNameToId(name);
-	const url: string = `http://www.furaffinity.net/user/${id}`;
+	const url: string = `https://www.furaffinity.net/user/${id}`;
 	const shinies: boolean = ($('.userpage-layout-left-col-content > a:nth-child(4)').length > 0);
-	const avatar: string = `http:${$('.loggedin_user_avatar')[0].attribs.src}`;
+	const avatar: string = `https:${$('.loggedin_user_avatar')[0].attribs.src}`;
 
 	return {
 		id,
@@ -233,7 +234,8 @@ export function ParseWatchingList(body: string): Author[] {
 	return $('.watch-list-items a').map((index, a) => {
 		const name = a.childNodes[0].data?.trim() ?? '';
 		const id = convertNameToId(name);
-		const url = `http://www.furaffinity.net/user/${id}`;
+		const url = `https://www.furaffinity.net/user/${id}`;
+
 		return {
 			id,
 			name,
@@ -252,10 +254,11 @@ export function ParseMyWatchingList(body: string): Author[] {
 	checkSystemMessage($);
 
 	return $('.flex-item-watchlist').map((index, div) => {
-		const avatar = `http:${$(div).find('img.avatar')[0].attribs.src}`;
+		const avatar = `https:${$(div).find('img.avatar')[0].attribs.src}`;
 		const name = $(div).find('.flex-item-watchlist-controls a strong')[0].childNodes[0].data?.trim() ?? '';
 		const id = convertNameToId(name);
-		const url = `http://www.furaffinity.net/user/${id}`;
+		const url = `https://www.furaffinity.net/user/${id}`;
+
 		return {
 			id,
 			name,

@@ -1,4 +1,4 @@
-const ENDPOINT = 'http://www.furaffinity.net';
+const ENDPOINT = 'https://www.furaffinity.net';
 import { Rating, SearchType, Category, Tag, Species, Gender } from './Enums';
 
 import { default as cloudscraper, Response } from 'cloudscraper';

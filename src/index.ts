@@ -52,8 +52,7 @@ export async function Submission(id: string): Promise<Submission | null> {
  */
 export async function User(): Promise<Author | null> {
 	try {
-		const body = await FetchIndex();
-		return ParseUser(body);
+		return ParseUser(await FetchIndex());
 	} catch (e) {
 		console.error('furaffinity-api: ', e);
 		return null;

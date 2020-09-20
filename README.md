@@ -67,9 +67,9 @@ import { Browse } from "furaffinity-api";
 
 Browse({
   /** BrowseOptions */
-}).then(res => {
+}).then((res) => {
   // res is an array of Result(s)
-  res[0].getSubmission().then(submission => {
+  res[0].getSubmission().then((submission) => {
     // submission is a Submission
   });
 });
@@ -82,7 +82,7 @@ Looking up a specific submission:
 ```js
 import { Submission } from "furaffinity-api";
 
-Submission("1234567890").then(res => {
+Submission("1234567890").then((res) => {
   // res is a Submission
 });
 ```
@@ -94,7 +94,7 @@ Get information of current logged in user:
 ```js
 import { User } from "furaffinity-api";
 
-User().then(user => {
+User().then((user) => {
   // console.log(user);
 });
 ```
@@ -106,10 +106,10 @@ Get information of an author:
 ```js
 import { Author, WatchingList } from "furaffinity-api";
 
-Author("user_id").then(res => {
+Author("user_id").then((res) => {
   // res is an Author
   // Author has id, name, url and avatar(maybe undefined)
-  WatchingList(res.id).then(list => {
+  WatchingList(res.id).then((list) => {
     // list is an Author array
   });
 });
@@ -122,9 +122,9 @@ Get results from someone's gallery:
 ```js
 import { Gallery } from "furaffinity-api";
 
-Gallery("author_id").then(res => {
+Gallery("author_id").then((res) => {
   // res is an array of Result(s)
-  res[0].getSubmission().then(submission => {
+  res[0].getSubmission().then((submission) => {
     // submission is a Submission
   });
 });
@@ -137,9 +137,9 @@ Get results from someone's scraps:
 ```js
 import { Scraps } from "furaffinity-api";
 
-Scraps("author_id").then(res => {
+Scraps("author_id").then((res) => {
   // res is an array of Result(s)
-  res[0].getSubmission().then(submission => {
+  res[0].getSubmission().then((submission) => {
     // submission is a Submission
   });
 });
@@ -152,7 +152,7 @@ Get all watching authors of an author(can't get avatar):
 ```js
 import { WatchingList } from "furaffinity-api";
 
-WatchingList("author_id").then(list => {
+WatchingList("author_id").then((list) => {
   // list is an Author array
 });
 ```
@@ -165,14 +165,15 @@ Get all watching authors of current login user(can get avatar):
 ```js
 import { MyWatchingList } from "furaffinity-api";
 
-MyWatchingList().then(list => {
+MyWatchingList().then((list) => {
   // list is an Author array
 });
+```
 
 ## Special Thanks
 
 - [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api is based on this project.
 
 ## License
+
 ISC
-```

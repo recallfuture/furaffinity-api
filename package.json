@@ -6,25 +6,31 @@
   "scripts": {
     "test": "mocha -r ts-node/register src/test/*.spec.ts",
     "dev": "tsc-watch --compiler typescript/bin/tsc",
-    "build-ts:win": "rmdir dist /s /q && tsc"
+    "build": "rimraf ./dist && tsc"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/radarcz/furaffinity-api"
+    "url": "https://github.com/recallfuture/furaffinity-api"
   },
   "keywords": [
     "furaffinity"
   ],
-  "contributors": ["recallfuture", "radarcz"],
+  "contributors": [
+    "mcrocks999",
+    "recallfuture",
+    "radarcz"
+  ],
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "cloudscraper": "^4.6.0",
+    "lodash": "^4.17.20",
     "request": "^2.88.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.9",
     "@types/cheerio": "^0.22.15",
+    "@types/lodash": "^4.14.161",
     "@types/mocha": "^7.0.1",
     "@types/node": "^10.12.18",
     "@types/request": "^2.48.4",
@@ -32,6 +38,7 @@
     "chai": "^4.2.0",
     "mocha": "^7.1.0",
     "request-promise": "^4.2.5",
+    "rimraf": "^3.0.2",
     "ts-node": "^8.6.2",
     "tsc-watch": "^4.0.0",
     "typescript": "^3.7.4"

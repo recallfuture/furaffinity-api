@@ -24,7 +24,6 @@ function checkSystemMessage($: CheerioStatic) {
 	// Check system message
 	const noticeMessage = $('section.notice-message');
 	if (noticeMessage.length !== 0) {
-		console.log(noticeMessage.html());
 		const systemMessage = noticeMessage[0].childNodes[1].childNodes[3].childNodes[0].nodeValue;
 		throw new Error(systemMessage);
 	}
@@ -104,7 +103,6 @@ export function ParseSubmission(body: string, id: string): Submission {
 	// buttons
 	let downloadUrl: string = `http:${sidebar.find('.buttons .download a')[0].attribs.href}`;
 	const favLink: string = `http://furaffinity.net${sidebar.find('.buttons .fav a')[0].attribs.href}`;
-	console.log(downloadUrl);
 
 	// header
 	const title: string = content.find('.submission-id-sub-container .submission-title p')[0].childNodes[0].data?.trim() ?? '';
@@ -130,10 +128,10 @@ export function ParseSubmission(body: string, id: string): Submission {
 		downloadUrl = downloadUrl.replace('d.facdn.net/download/', 'd.facdn.net/');
 	}
 
-	const previewUrl: string | undefined = 
-		(content.find('.submission-area img').length > 0) 
-		? `http:${content.find('.submission-area img')[0].attribs['data-preview-src']}` 
-		: undefined;
+	const previewUrl: string | undefined =
+		(content.find('.submission-area img').length > 0)
+			? `http:${content.find('.submission-area img')[0].attribs['data-preview-src']}`
+			: undefined;
 
 	return {
 		id,

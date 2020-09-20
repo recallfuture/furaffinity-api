@@ -1,6 +1,6 @@
 {
   "name": "furaffinity-api",
-  "version": "3.5.2",
+  "version": "3.5.0",
   "description": "FurAffinity wrapper for Node.js",
   "main": "dist/index.js",
   "scripts": {

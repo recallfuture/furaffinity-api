@@ -1,10 +1,10 @@
 {
   "name": "furaffinity-api",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "description": "FurAffinity wrapper for Node.js",
   "main": "dist/index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register src/test/*.spec.ts",
+    "test": "mocha -r ts-node/register **/*.spec.ts",
     "dev": "tsc-watch --compiler typescript/bin/tsc",
     "build": "rimraf ./dist && tsc"
   },

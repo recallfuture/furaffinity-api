@@ -39,8 +39,15 @@ function request(options: (Request.UriOptions & Request.CoreOptions) | (Request.
 	return new Promise((resolve, reject) => {
 		options = _.merge({
 			headers: COOKIES.loggedIn ? {
-				Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`
-			} : {}
+				Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`,
+				Connection: 'Keep-Alive'
+			} : {
+				Connection: 'Keep-Alive'
+			},
+			agentOptions: {
+				keepAlive: true,
+				maxSockets: Infinity
+			}
 		}, options);
 
 		cloudscraper(options, (error: any, response: Response, body: string) => {
@@ -63,49 +70,44 @@ export async function FetchIndex(): Promise<string> {
 }
 
 export async function FetchSearch(query: string, options?: SearchOptions): Promise<string> {
-	const url = `${ENDPOINT}/search/?q=${encodeURIComponent(query)}`;
+	const url = `${ENDPOINT}/search`;
 	return await request({
 		url,
-		formData: options ? {
-			'rating-general': (options.rating || Rating.Any) & Rating.General ? 'on' : 'off',
-			'rating-mature': (options.rating || Rating.Any) & Rating.Mature ? 'on' : 'off',
-			'rating-adult': (options.rating || Rating.Any) & Rating.Adult ? 'on' : 'off',
-			'type-art': (options.type || SearchType.All) & SearchType.Art ? 'on' : 'off',
-			'type-flash': (options.type || SearchType.All) & SearchType.Flash ? 'on' : 'off',
-			'type-photo': (options.type || SearchType.All) & SearchType.Photos ? 'on' : 'off',
-			'type-music': (options.type || SearchType.All) & SearchType.Music ? 'on' : 'off',
-			'type-story': (options.type || SearchType.All) & SearchType.Story ? 'on' : 'off',
-			'type-poetry': (options.type || SearchType.All) & SearchType.Poetry ? 'on' : 'off',
+		method: 'post',
+		formData: {
+			'rating-general': (options?.rating || Rating.Any) & Rating.General ? 'on' : 'off',
+			'rating-mature': (options?.rating || Rating.Any) & Rating.Mature ? 'on' : 'off',
+			'rating-adult': (options?.rating || Rating.Any) & Rating.Adult ? 'on' : 'off',
+			'type-art': (options?.type || SearchType.All) & SearchType.Art ? 'on' : 'off',
+			'type-flash': (options?.type || SearchType.All) & SearchType.Flash ? 'on' : 'off',
+			'type-photo': (options?.type || SearchType.All) & SearchType.Photos ? 'on' : 'off',
+			'type-music': (options?.type || SearchType.All) & SearchType.Music ? 'on' : 'off',
+			'type-story': (options?.type || SearchType.All) & SearchType.Story ? 'on' : 'off',
+			'type-poetry': (options?.type || SearchType.All) & SearchType.Poetry ? 'on' : 'off',
 			perpage: 72,
-			page: options.page || 1,
-		} : {}
+			page: (options?.page && options.page - 1) || 0,
+			next_page: 'Next',
+			q: query
+		}
 	});
 }
 
-let warn = false;
 export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
-	warn || console.log('WARN: Browse currently ignores any options passed.');
-	warn = true;
-	const newOptions: BrowseOptions = _.assign({
-		category: 1,
-		tag: 1,
-		species: 1,
-		gender: 1
-	}, options);
 	const url = `${ENDPOINT}/browse`;
 	return await request({
 		url,
+		method: 'post',
 		formData: {
-			'rating-general': (newOptions.rating || 0x7) & Rating.General ? 'on' : 'off',
-			'rating-mature': (newOptions.rating || 0x7) & Rating.Mature ? 'on' : 'off',
-			'rating-adult': (newOptions.rating || 0x7) & Rating.Adult ? 'on' : 'off',
-			'cat': newOptions.category,
-			'atype': newOptions.tag,
-			'species': newOptions.species,
-			'gender': newOptions.gender,
+			'rating_general': (options?.rating || 0x7) & Rating.General ? 'on' : 'off',
+			'rating_mature': (options?.rating || 0x7) & Rating.Mature ? 'on' : 'off',
+			'rating_adult': (options?.rating || 0x7) & Rating.Adult ? 'on' : 'off',
+			'cat': options?.category || 1,
+			'atype': options?.tag || 1,
+			'species': options?.species || 1,
+			'gender': options?.gender || 0,
 			perpage: 72,
-			go: 'Update',
-			page: newOptions.page || 1,
+			go: 'Apply',
+			page: options?.page || 1,
 		}
 	});
 }

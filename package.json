@@ -22,14 +22,14 @@
   ],
   "license": "ISC",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
+    "cheerio": "1.0.0-rc.5",
     "cloudscraper": "^4.6.0",
     "lodash": "^4.17.20",
     "request": "^2.88.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.9",
-    "@types/cheerio": "^0.22.15",
+    "@types/cheerio": "0.22.21",
     "@types/lodash": "^4.14.161",
     "@types/mocha": "^7.0.1",
     "@types/node": "^10.12.18",

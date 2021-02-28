@@ -142,6 +142,21 @@ Scraps("author_id").then((res) => {
 });
 ```
 
+### Submissions()
+
+Get results from submissions timeline:
+
+```js
+import { Submissions } from "furaffinity-api";
+
+Submissions().then((res) => {
+  // res is an array of Result(s)
+  res[0].getSubmission().then((submission) => {
+    // submission is a Submission
+  });
+});
+```
+
 ### WatchingList(id: string)
 
 Get all watching authors of an author(can't get avatar):

@@ -28,6 +28,10 @@ export async function Browse(options?: BrowseOptions): Promise<PagingResults> {
 	return ParseBrowsePaging(body, results, options);
 }
 
+/**
+ * Get results from submissions timeline page
+ * @param options submissions options
+ */
 export async function Submissions(options?: SubmissionsOptions): Promise<PagingResults> {
 	const body = await FetchSubmissions(options);
 	const results = ParseFigures(body);

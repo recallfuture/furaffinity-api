@@ -6,7 +6,7 @@ export interface Author {
 	url: string,
 	avatar?: string,
 	shinies?: boolean,
-	stat?: {
+	stats?: {
 		views: number,
 		submissions: number,
 		favs: number,

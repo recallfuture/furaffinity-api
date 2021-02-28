@@ -412,7 +412,7 @@ export function ParseAuthor(body: string): Author {
     url,
     avatar,
     shinies,
-    stat: {
+    stats: {
       views: Number.parseInt(views),
       submissions: Number.parseInt(submissions),
       favs: Number.parseInt(favs),

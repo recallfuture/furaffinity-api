@@ -6,6 +6,15 @@ export interface Author {
 	url: string,
 	avatar?: string,
 	shinies?: boolean,
+	stat?: {
+		views: number,
+		submissions: number,
+		favs: number,
+
+		commentsEarned: number,
+		commentsMade: number,
+		journals: number,
+	}
 }
 
 export interface Result {
@@ -24,6 +33,13 @@ export interface Result {
 	author: Author,
 	getSubmission(): Promise<Submission | null>
 };
+
+export interface PagingResults extends Array<Result> {
+	prevLink?: string,
+	nextLink?: string,
+	prev?: () => Promise<PagingResults>,
+	next?: () => Promise<PagingResults>
+}
 
 export interface Submission {
 	id: string,

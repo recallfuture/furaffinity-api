@@ -1,9 +1,9 @@
-const ENDPOINT = 'https://www.furaffinity.net';
 import { Rating, SearchType, Category, Tag, Species, Gender } from './Enums';
 import Request from 'request';
 import { default as cloudscraper, Response } from 'cloudscraper';
 import _ from 'lodash'
 
+export const ENDPOINT = 'https://www.furaffinity.net';
 export const COOKIES = { loggedIn: false, a: '', b: '' };
 
 export function Login(cookieA: string, cookieB: string) {
@@ -19,17 +19,25 @@ export function SetProxy(config?: false | string) {
 export interface SearchOptions {
 	page?: number,
 	rating?: Rating,
-	type?: SearchType
+	type?: SearchType,
+	prev?: boolean,
 };
 
 export interface BrowseOptions {
 	page?: number,
+	perpage?: number,
 	rating?: Rating,
 	category?: Category,
 	tag?: Tag,
 	species?: Species,
 	gender?: Gender
 };
+
+export interface SubmissionsOptions {
+	startAt?: string;
+	sort?: "new" | "old";
+	perpage?: 24 | 48 | 72;
+}
 
 /**
  * util to request
@@ -65,12 +73,17 @@ function request(options: (Request.UriOptions & Request.CoreOptions) | (Request.
 	});
 }
 
-export async function FetchIndex(): Promise<string> {
-	return await request({ url: ENDPOINT })
+export async function FetchHome(): Promise<string> {
+	return await request({ url: `${ENDPOINT}/me` })
 }
 
 export async function FetchSearch(query: string, options?: SearchOptions): Promise<string> {
 	const url = `${ENDPOINT}/search`;
+
+	const page = options?.prev
+		? (options?.page || 1) + 1
+		: (options?.page || 1) - 1
+
 	return await request({
 		url,
 		method: 'post',
@@ -84,9 +97,10 @@ export async function FetchSearch(query: string, options?: SearchOptions): Promi
 			'type-music': (options?.type || SearchType.All) & SearchType.Music ? 'on' : 'off',
 			'type-story': (options?.type || SearchType.All) & SearchType.Story ? 'on' : 'off',
 			'type-poetry': (options?.type || SearchType.All) & SearchType.Poetry ? 'on' : 'off',
-			perpage: 72,
-			page: (options?.page && options.page - 1) || 0,
-			next_page: 'Next',
+			page,
+			prev_page: options?.prev ? 'Back' : undefined,
+			next_page: options?.prev ? undefined : 'Next',
+			mode: 'extended',
 			q: query
 		}
 	});
@@ -105,25 +119,33 @@ export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
 			'atype': options?.tag || 1,
 			'species': options?.species || 1,
 			'gender': options?.gender || 0,
-			perpage: 72,
+			perpage: options?.perpage || 72,
 			go: 'Apply',
 			page: options?.page || 1,
 		}
 	});
 }
 
-export async function FetchGallery(id: string, page: number = 1): Promise<string> {
-	const url = `${ENDPOINT}/gallery/${id}/${page}`;
+export async function FetchGallery(id: string, page: number = 1, perpage?: number): Promise<string> {
+	const url = `${ENDPOINT}/gallery/${id}/${page}?perpage=${perpage}`;
 	return await request({ url });
 }
 
-export async function FetchScraps(id: string, page: number = 1): Promise<string> {
-	const url = `${ENDPOINT}/scraps/${id}/${page}`;
+export async function FetchScraps(id: string, page: number = 1, perpage?: number): Promise<string> {
+	const url = `${ENDPOINT}/scraps/${id}/${page}?perpage=${perpage}`;
 	return await request({ url });
 }
 
 export async function FetchSubmission(id: string): Promise<string> {
 	const url = `${ENDPOINT}/view/${id}`;
+	return await request({ url });
+}
+
+export async function FetchSubmissions(options?: SubmissionsOptions): Promise<string> {
+	const startAt = typeof options?.startAt === "string" ? "~" + options.startAt : "";
+	const sort = options?.sort || "new";
+	const perpage = options?.perpage || 72;
+	const url = `${ENDPOINT}/msg/submissions/${sort}${startAt}@${perpage}`;
 	return await request({ url });
 }
 

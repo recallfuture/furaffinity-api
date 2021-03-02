@@ -34,18 +34,18 @@ function checkSystemMessage($: CheerioStatic) {
  * Parse result from figure element
  * @param figure CheerioElement
  */
-export function ParseFigure(figure: CheerioElement, author?: Author): Result {
+export function ParseFigure(figure: CheerioElement, selector: Cheerio): Result {
   const id: string = figure.attribs.id.split('-').pop() ?? '';
   const thumb: string =
     'http:' + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attribs.src;
-  const authorName = figure.childNodes[1].childNodes[1].childNodes[2].childNodes[0].nodeValue.trim();
+  const authorName = selector.find('figcaption p:last-child a').first().attr().title;
   const authorId = convertNameToId(authorName);
 
   return {
     type: SubmissionType[classNames(figure)[1].split('-').pop() as keyof typeof SubmissionType],
     id,
     title: figure.childNodes[1].childNodes[0].childNodes[0].childNodes[0]?.nodeValue ?? '',
-    url: `https://www.furaffinity.net/view/${id}`,
+    url: `${ENDPOINT}/view/${id}`,
     rating:
       Rating[
         classNames(figure)[0]
@@ -60,9 +60,9 @@ export function ParseFigure(figure: CheerioElement, author?: Author): Result {
       medium: thumb.replace(/@\d+?-/g, '@800-'),
       large: thumb.replace(/@\d+?-/g, '@1600-'),
     },
-    author: author ?? {
+    author: {
       id: authorId,
-      url: `https://www.furaffinity.net/user/${authorId}`,
+      url: `${ENDPOINT}/user/${authorId}`,
       name: authorName,
     },
     getSubmission: async () => {
@@ -78,14 +78,9 @@ export function ParseFigure(figure: CheerioElement, author?: Author): Result {
 export function ParseFigures(body: string): PagingResults {
   const $ = cheerio.load(body);
 
-  let author: Author | undefined;
-  try {
-    author = ParseAuthor(body);
-  } catch (e) {}
-
   const results: PagingResults = [];
   $('figure').each((index, figure) => {
-    results.push(ParseFigure(figure, author));
+    results.push(ParseFigure(figure, $(figure)));
   });
   return results;
 }
@@ -257,9 +252,7 @@ export function ParseSubmissionsPaging(body: string, results: PagingResults): Pa
   }
 
   if (results.nextLink) {
-    results.nextLink = ENDPOINT + $(links[2]).find('form').attr()['action'];
-
-    const matchs = results.nextLink.match(/\/browse\/(\d+?)$/);
+    const matchs = results.nextLink.match(/\/submissions\/(.+?)~(.+?)@(\d+)\/$/);
     if (matchs) {
       const sort = matchs[1];
       const startAt = matchs[2];
@@ -437,7 +430,7 @@ export function ParseWatchingList(body: string): Author[] {
     .map((index, a) => {
       const name = a.childNodes[0].data?.trim() ?? '';
       const id = convertNameToId(name);
-      const url = `https://www.furaffinity.net/user/${id}`;
+      const url = `${ENDPOINT}/user/${id}`;
 
       return {
         id,
@@ -463,7 +456,7 @@ export function ParseMyWatchingList(body: string): Author[] {
       const name =
         $(div).find('.flex-item-watchlist-controls a strong')[0].childNodes[0].data?.trim() ?? '';
       const id = convertNameToId(name);
-      const url = `https://www.furaffinity.net/user/${id}`;
+      const url = `${ENDPOINT}/user/${id}`;
 
       return {
         id,

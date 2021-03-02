@@ -1,5 +1,8 @@
 ## CHANGELOG
 
+### 4.0.1
+- Fix Submissions parse error
+
 ### 4.0.0
 - Use PagingResults instead of Result[]
 - No more null are returned, you can use try catch by yourself

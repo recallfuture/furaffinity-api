@@ -14,13 +14,13 @@
   <a href="https://github.com/recallfuture/furaffinity-api">
     <img alt="NPM" src="https://img.shields.io/npm/l/furaffinity-api">
   </a>
+  <p align="center"><a href="README.zh-CN.md">English</a> | 中文</p>
 
-  <p align="center">English | <a href="README.zh-CN.md">中文</a></p>
 </div>
 
-> **Important:** This project can only be used with Furaffinity's **Modern** style.
+> **重要提示:** 本项目适用于 Furaffinity 的 **现代** 风格.
 
-## Installation
+## 安装
 
 ```bash
 npm install furaffinity-api
@@ -30,7 +30,7 @@ npm install furaffinity-api
 
 ### Login(a: string, b: string)
 
-Login to furaffinity use cookies
+使用 cookie 登录 furaffinity
 
 ```js
 import { Login } from "furaffinity-api"
@@ -43,22 +43,22 @@ Login("cookie_a", "cookie_b")
 
 ### Search(query: string, options: SearchOptions)
 
-Searching for content:
+搜索作品
 
 ```js
 import { Search, Type } from 'furaffinity-api';
 
 Search('search query', { /** SearchOptions */ type?, rating?, page? }).then(res => {
-  // res is an array of Result(s)
+  // 结果
   res[0].getSubmission().then(submission => {
-    // submission is a Submission
+    // 作品详情
   });
 });
 ```
 
 ### Browse(options?: BrowseOptions)
 
-Get results from Browse page:
+获取浏览页作品
 
 ```js
 import { Browse } from "furaffinity-api"
@@ -66,16 +66,16 @@ import { Browse } from "furaffinity-api"
 Browse({
   /** BrowseOptions */
 }).then((res) => {
-  // res is an array of Result(s)
+  // 结果
   res[0].getSubmission().then((submission) => {
-    // submission is a Submission
+    // 作品详情
   })
 })
 ```
 
 ### Submission(id: string)
 
-Looking up a specific submission:
+获取特定的作品
 
 ```js
 import { Submission } from "furaffinity-api"
@@ -87,7 +87,7 @@ Submission("1234567890").then((res) => {
 
 ### User()
 
-Get information of current logged in user:
+获取当前用户信息
 
 ```js
 import { User } from "furaffinity-api"
@@ -99,93 +99,93 @@ User().then((user) => {
 
 ### Author(id: string)
 
-Get information of an author:
+获取某个作者的用户信息
 
 ```js
 import { Author, WatchingList } from "furaffinity-api"
 
 Author("user_id").then((res) => {
-  // res is an Author
-  // Author has id, name, url and avatar(maybe undefined)
+  // 某作者信息
+  // 包含 id, name, url and avatar(可能为 undefined)
   WatchingList(res.id).then((list) => {
-    // list is an Author array
+    // 查询该作者的关注列表
   })
 })
 ```
 
 ### Gallery(id: string)
 
-Get results from someone's gallery:
+获取某用户的画廊
 
 ```js
 import { Gallery } from "furaffinity-api"
 
 Gallery("author_id").then((res) => {
-  // res is an array of Result(s)
+  // 结果
   res[0].getSubmission().then((submission) => {
-    // submission is a Submission
+    // 作品详情
   })
 })
 ```
 
 ### Scraps(id: string)
 
-Get results from someone's scraps:
+获取某用户废弃作品
 
 ```js
 import { Scraps } from "furaffinity-api"
 
 Scraps("author_id").then((res) => {
-  // res is an array of Result(s)
+  // 结果
   res[0].getSubmission().then((submission) => {
-    // submission is a Submission
+    // 作品详情
   })
 })
 ```
 
 ### Submissions()
 
-Get results from submissions timeline:
+根据时间线，获取作品详情
 
 ```js
 import { Submissions } from "furaffinity-api"
 
 Submissions().then((res) => {
-  // res is an array of Result(s)
+  // 结果
   res[0].getSubmission().then((submission) => {
-    // submission is a Submission
+    // 某条作品详情
   })
 })
 ```
 
 ### WatchingList(id: string)
 
-Get all watching authors of an author(can't get avatar):
+获取某用户的关注列表（暂不能获取头像）
 
 ```js
 import { WatchingList } from "furaffinity-api"
 
 WatchingList("author_id").then((list) => {
-  // list is an Author array
+  // 作者列表
 })
 ```
 
 ### MyWatchingList()
 
 **Login first**
-Get all watching authors of current login user(can get avatar):
+获取当前登录用户的关注列表（暂不能获取头像）
 
 ```js
 import { MyWatchingList } from "furaffinity-api"
 
 MyWatchingList().then((list) => {
-  // list is an Author array
+  // 作者列表
 })
 ```
 
-## Test
+## 测试
 
-Please improve the test configuration `/tests/jest.config.ts` before testing.
+在测试前，先在 `/tests/jest.config.ts` 中添加配置:
 
 ```js
 export const options: ITestConfig = {
@@ -203,15 +203,15 @@ export const options: ITestConfig = {
 }
 ```
 
-Then run:
+接着运行:
 
 ```bash
 npm run test
 ```
 
-## Special Thanks
+## 鸣谢
 
-- [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api is based on this project.
+- [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api 基于这个仓库
 
 ## License
 

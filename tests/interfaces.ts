@@ -1,13 +1,13 @@
 interface ITestConfig {
   loginOptions: {
-    cookieA: string
-    cookieB: string
-  }
+    cookieA: string;
+    cookieB: string;
+  };
   watchOptions: {
-    userId: string
-    shouldContainUserId: string
-  },
+    userId: string;
+    shouldContainUserId: string;
+  };
   authorOptions: {
-    userId: string
-  }
+    userId: string;
+  };
 }

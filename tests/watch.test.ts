@@ -1,5 +1,4 @@
 import { WatchingList } from "../src/index";
-require("dotenv").config();
 import * as config from "./jest.config";
 const { userId, shouldContainUserId } = config.options.watchOptions;
 

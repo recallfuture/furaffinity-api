@@ -1,4 +1,4 @@
-import { Author, Login, Gallery } from "../src/index";
+import { Login, Gallery } from "../src/index";
 import * as config from "./jest.config";
 const { userId } = config.options.authorOptions;
 const { cookieA, cookieB } = config.options.loginOptions;

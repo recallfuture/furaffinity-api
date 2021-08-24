@@ -105,10 +105,10 @@ User().then((user) => {
 import { Author, WatchingList } from "furaffinity-api"
 
 Author("user_id").then((res) => {
-  // res is an Author
-  // Author has id, name, url and avatar(maybe undefined)
+  // 某作者信息
+  // 包含 id, name, url and avatar(可能为 undefined)
   WatchingList(res.id).then((list) => {
-    // list is an Author array
+    // 查询该作者的关注列表
   })
 })
 ```

@@ -4,7 +4,7 @@
   "description": "FurAffinity wrapper for Node.js",
   "main": "dist/index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register **/*.spec.ts",
+    "test": "jest",
     "dev": "tsc-watch --compiler typescript/bin/tsc",
     "build": "rimraf ./dist && tsc"
   },
@@ -28,14 +28,18 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.15.0",
     "@types/chai": "^4.2.9",
     "@types/cheerio": "0.22.21",
+    "@types/jest": "^27.0.1",
     "@types/lodash": "^4.14.161",
     "@types/mocha": "^7.0.1",
     "@types/node": "^10.12.18",
     "@types/request": "^2.48.4",
     "@types/request-promise": "^4.1.45",
     "chai": "^4.2.0",
+    "dotenv": "^10.0.0",
+    "jest": "^27.0.6",
     "mocha": "^7.1.0",
     "request-promise": "^4.2.5",
     "rimraf": "^3.0.2",

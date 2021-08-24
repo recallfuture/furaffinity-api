@@ -183,6 +183,32 @@ MyWatchingList().then((list) => {
 })
 ```
 
+## 测试
+
+在测试前，先在 `/tests/jest.config.ts` 中添加配置:
+
+```js
+export const options: ITestConfig = {
+  loginOptions: {
+    cookieA: "your cookie a", // your cookies
+    cookieB: "your cookie b",
+  },
+  watchOptions: {
+    userId: "your userid",
+    shouldContainUserId: "userid you are watching",
+  },
+  authorOptions: {
+    userId: "your favorite author's userid",
+  },
+}
+```
+
+接着运行:
+
+```bash
+npm run test
+```
+
 ## 鸣谢
 
 - [insert/furaffinity](https://gitlab.insrt.uk/insert/furaffinity): furaffinity-api 基于这个仓库

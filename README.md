@@ -28,17 +28,20 @@ npm install furaffinity-api
 
 ## APIs
 
+> Form version 4.1.0, you can call any API with their lower case name.
+> (e.g., `const {login, search} form "furaffinity-api";`)
+
 ### Login(a: string, b: string)
 
 Login to furaffinity use cookies
 
 ```js
-import { Login } from "furaffinity-api"
+import { Login } from "furaffinity-api";
 // or
-const { Login } = require("furaffinity-api")
+const { Login } = require("furaffinity-api");
 
 // to allow all results to be accessible, add your cookies
-Login("cookie_a", "cookie_b")
+Login("cookie_a", "cookie_b");
 ```
 
 ### Search(query: string, options: SearchOptions)
@@ -61,7 +64,7 @@ Search('search query', { /** SearchOptions */ type?, rating?, page? }).then(res 
 Get results from Browse page:
 
 ```js
-import { Browse } from "furaffinity-api"
+import { Browse } from "furaffinity-api";
 
 Browse({
   /** BrowseOptions */
@@ -69,8 +72,8 @@ Browse({
   // res is an array of Result(s)
   res[0].getSubmission().then((submission) => {
     // submission is a Submission
-  })
-})
+  });
+});
 ```
 
 ### Submission(id: string)
@@ -78,11 +81,11 @@ Browse({
 Looking up a specific submission:
 
 ```js
-import { Submission } from "furaffinity-api"
+import { Submission } from "furaffinity-api";
 
 Submission("1234567890").then((res) => {
   // res is a Submission
-})
+});
 ```
 
 ### User()
@@ -90,11 +93,11 @@ Submission("1234567890").then((res) => {
 Get information of current logged in user:
 
 ```js
-import { User } from "furaffinity-api"
+import { User } from "furaffinity-api";
 
 User().then((user) => {
   // console.log(user);
-})
+});
 ```
 
 ### Author(id: string)
@@ -102,15 +105,15 @@ User().then((user) => {
 Get information of an author:
 
 ```js
-import { Author, WatchingList } from "furaffinity-api"
+import { Author, WatchingList } from "furaffinity-api";
 
 Author("user_id").then((res) => {
   // res is an Author
   // Author has id, name, url and avatar(maybe undefined)
   WatchingList(res.id).then((list) => {
     // list is an Author array
-  })
-})
+  });
+});
 ```
 
 ### Gallery(id: string)
@@ -118,14 +121,14 @@ Author("user_id").then((res) => {
 Get results from someone's gallery:
 
 ```js
-import { Gallery } from "furaffinity-api"
+import { Gallery } from "furaffinity-api";
 
 Gallery("author_id").then((res) => {
   // res is an array of Result(s)
   res[0].getSubmission().then((submission) => {
     // submission is a Submission
-  })
-})
+  });
+});
 ```
 
 ### Scraps(id: string)
@@ -133,14 +136,14 @@ Gallery("author_id").then((res) => {
 Get results from someone's scraps:
 
 ```js
-import { Scraps } from "furaffinity-api"
+import { Scraps } from "furaffinity-api";
 
 Scraps("author_id").then((res) => {
   // res is an array of Result(s)
   res[0].getSubmission().then((submission) => {
     // submission is a Submission
-  })
-})
+  });
+});
 ```
 
 ### Submissions()
@@ -148,14 +151,14 @@ Scraps("author_id").then((res) => {
 Get results from submissions timeline:
 
 ```js
-import { Submissions } from "furaffinity-api"
+import { Submissions } from "furaffinity-api";
 
 Submissions().then((res) => {
   // res is an array of Result(s)
   res[0].getSubmission().then((submission) => {
     // submission is a Submission
-  })
-})
+  });
+});
 ```
 
 ### WatchingList(id: string)
@@ -163,11 +166,11 @@ Submissions().then((res) => {
 Get all watching authors of an author(can't get avatar):
 
 ```js
-import { WatchingList } from "furaffinity-api"
+import { WatchingList } from "furaffinity-api";
 
 WatchingList("author_id").then((list) => {
   // list is an Author array
-})
+});
 ```
 
 ### MyWatchingList()
@@ -176,11 +179,11 @@ WatchingList("author_id").then((list) => {
 Get all watching authors of current login user(can get avatar):
 
 ```js
-import { MyWatchingList } from "furaffinity-api"
+import { MyWatchingList } from "furaffinity-api";
 
 MyWatchingList().then((list) => {
   // list is an Author array
-})
+});
 ```
 
 ## Test
@@ -191,16 +194,16 @@ Please improve the test configuration `/tests/jest.config.ts` before testing.
 export const options: ITestConfig = {
   loginOptions: {
     cookieA: "your cookie a", // your cookies
-    cookieB: "your cookie b",
+    cookieB: "your cookie b"
   },
   watchOptions: {
     userId: "your userid",
-    shouldContainUserId: "userid you are watching",
+    shouldContainUserId: "userid you are watching"
   },
   authorOptions: {
-    userId: "your favorite author's userid",
-  },
-}
+    userId: "your favorite author's userid"
+  }
+};
 ```
 
 Then run:

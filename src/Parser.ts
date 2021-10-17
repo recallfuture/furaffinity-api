@@ -2,7 +2,7 @@ import cheerio from "cheerio";
 import cloneDeep from "lodash/cloneDeep";
 import { SubmissionType, Species, Category, Gender, Rating } from "./Enums";
 import { IAuthor, IPagingResults, IResult, ISubmission } from "./interfaces";
-import { Browse, Gallery, Scraps, Search, Submission as GetSubmission, Submissions } from ".";
+import { browse, gallery, scraps, search, submission, submissions } from ".";
 import { BrowseOptions, ENDPOINT, FaveSubmission, SearchOptions, SubmissionsOptions } from "./Request";
 
 /**
@@ -10,10 +10,7 @@ import { BrowseOptions, ENDPOINT, FaveSubmission, SearchOptions, SubmissionsOpti
  * @param name author name
  */
 function convertNameToId(name: string): string {
-  return name
-    .trim()
-    .replace("_", "")
-    .toLowerCase();
+  return name.trim().replace("_", "").toLowerCase();
 }
 
 /**
@@ -40,19 +37,11 @@ function checkSystemMessage($: CheerioStatic) {
 export function ParseFigure(figure: CheerioElement, selector: Cheerio): IResult {
   const id: string = figure.attribs.id.split("-").pop() ?? "";
   const thumb: string = "http:" + figure.childNodes[0].childNodes[0].childNodes[0].childNodes[0].attribs.src;
-  const authorName = selector
-    .find("figcaption p:last-child a")
-    .first()
-    .attr().title;
+  const authorName = selector.find("figcaption p:last-child a").first().attr().title;
   const authorId = convertNameToId(authorName);
 
   return {
-    type:
-      SubmissionType[
-        classNames(figure)[1]
-          .split("-")
-          .pop() as keyof typeof SubmissionType
-      ],
+    type: SubmissionType[classNames(figure)[1].split("-").pop() as keyof typeof SubmissionType],
     id,
     title: figure.childNodes[1].childNodes[0].childNodes[0].childNodes[0]?.nodeValue ?? "",
     url: `${ENDPOINT}/view/${id}`,
@@ -76,7 +65,7 @@ export function ParseFigure(figure: CheerioElement, selector: Cheerio): IResult 
       name: authorName
     },
     getSubmission: async () => {
-      return await GetSubmission(id);
+      return await submission(id);
     }
   };
 }
@@ -101,34 +90,26 @@ export function ParseGalleryPaging(body: string, results: IPagingResults, perpag
   const links = $(".submission-list .aligncenter:nth-child(1) div");
 
   if ($(links[0]).find("form").length > 0) {
-    results.prevLink =
-      ENDPOINT +
-      $(links[0])
-        .find("form")
-        .attr()["action"];
+    results.prevLink = ENDPOINT + $(links[0]).find("form").attr()["action"];
 
     const matchs = results.prevLink.match(/\/gallery\/(.+?)\/(\d+?)\/$/);
     if (matchs) {
       const id = matchs[1];
       const page = Number.parseInt(matchs[2]);
 
-      results.prev = () => Gallery(id, page, perpage);
+      results.prev = () => gallery(id, page, perpage);
     }
   }
 
   if ($(links[2]).find("form").length > 0) {
-    results.nextLink =
-      ENDPOINT +
-      $(links[2])
-        .find("form")
-        .attr()["action"];
+    results.nextLink = ENDPOINT + $(links[2]).find("form").attr()["action"];
 
     const matchs = results.nextLink.match(/\/gallery\/(.+?)\/(\d+?)\/$/);
     if (matchs) {
       const id = matchs[1];
       const page = Number.parseInt(matchs[2]);
 
-      results.next = () => Gallery(id, page, perpage);
+      results.next = () => gallery(id, page, perpage);
     }
   }
 
@@ -141,34 +122,26 @@ export function ParseScrapsPaging(body: string, results: IPagingResults, perpage
   const links = $(".submission-list .aligncenter:nth-child(1) div");
 
   if ($(links[0]).find("form").length > 0) {
-    results.prevLink =
-      ENDPOINT +
-      $(links[0])
-        .find("form")
-        .attr()["action"];
+    results.prevLink = ENDPOINT + $(links[0]).find("form").attr()["action"];
 
     const matchs = results.prevLink.match(/\/scraps\/(.+?)\/(\d+?)\/$/);
     if (matchs) {
       const id = matchs[1];
       const page = Number.parseInt(matchs[2]);
 
-      results.prev = () => Scraps(id, page, perpage);
+      results.prev = () => scraps(id, page, perpage);
     }
   }
 
   if ($(links[2]).find("form").length > 0) {
-    results.nextLink =
-      ENDPOINT +
-      $(links[2])
-        .find("form")
-        .attr()["action"];
+    results.nextLink = ENDPOINT + $(links[2]).find("form").attr()["action"];
 
     const matchs = results.nextLink.match(/\/scraps\/(.+?)\/(\d+?)\/$/);
     if (matchs) {
       const id = matchs[1];
       const page = Number.parseInt(matchs[2]);
 
-      results.next = () => Scraps(id, page, perpage);
+      results.next = () => scraps(id, page, perpage);
     }
   }
 
@@ -183,14 +156,14 @@ export function ParseSearchPaging(body: string, results: IPagingResults, query: 
     const newOptions = cloneDeep(options || {});
     newOptions.page = newOptions.page ? newOptions.page - 1 : 1;
     newOptions.prev = true;
-    results.prev = () => Search(query, newOptions);
+    results.prev = () => search(query, newOptions);
   }
 
   if (!classNames(links[1]).includes("disabled")) {
     const newOptions = cloneDeep(options || {});
     newOptions.page = newOptions.page ? newOptions.page + 1 : 2;
     newOptions.prev = false;
-    results.next = () => Search(query, newOptions);
+    results.next = () => search(query, newOptions);
   }
 
   return results;
@@ -202,11 +175,7 @@ export function ParseBrowsePaging(body: string, results: IPagingResults, options
   const links = $(".section-body .navigation:nth-child(1) div");
 
   if ($(links[0]).find("form").length > 0) {
-    results.prevLink =
-      ENDPOINT +
-      $(links[0])
-        .find("form")
-        .attr()["action"];
+    results.prevLink = ENDPOINT + $(links[0]).find("form").attr()["action"];
 
     const matchs = results.prevLink.match(/\/browse\/(\d+?)$/);
     if (matchs) {
@@ -214,16 +183,12 @@ export function ParseBrowsePaging(body: string, results: IPagingResults, options
 
       options = options ?? {};
       options.page = page;
-      results.prev = () => Browse(options);
+      results.prev = () => browse(options);
     }
   }
 
   if ($(links[2]).find("form").length > 0) {
-    results.nextLink =
-      ENDPOINT +
-      $(links[2])
-        .find("form")
-        .attr()["action"];
+    results.nextLink = ENDPOINT + $(links[2]).find("form").attr()["action"];
 
     const matchs = results.nextLink.match(/\/browse\/(\d+?)$/);
     if (matchs) {
@@ -231,7 +196,7 @@ export function ParseBrowsePaging(body: string, results: IPagingResults, options
 
       options = options ?? {};
       options.page = page;
-      results.next = () => Browse(options);
+      results.next = () => browse(options);
     }
   }
 
@@ -244,32 +209,12 @@ export function ParseSubmissionsPaging(body: string, results: IPagingResults): I
   const links = $(".section-body .aligncenter:nth-child(1)");
 
   if ($(links).find("a.more-half").length === 2) {
-    results.prevLink =
-      ENDPOINT +
-      $(links)
-        .find("a.more-half")
-        .first()
-        .attr()["href"];
-    results.nextLink =
-      ENDPOINT +
-      $(links)
-        .find("a.more-half")
-        .last()
-        .attr()["href"];
+    results.prevLink = ENDPOINT + $(links).find("a.more-half").first().attr()["href"];
+    results.nextLink = ENDPOINT + $(links).find("a.more-half").last().attr()["href"];
   } else if ($(links).find("a.more.prev").length === 1) {
-    results.prevLink =
-      ENDPOINT +
-      $(links)
-        .find("a.more.prev")
-        .first()
-        .attr()["href"];
+    results.prevLink = ENDPOINT + $(links).find("a.more.prev").first().attr()["href"];
   } else if ($(links).find("a.more").length === 1) {
-    results.nextLink =
-      ENDPOINT +
-      $(links)
-        .find("a.more")
-        .first()
-        .attr()["href"];
+    results.nextLink = ENDPOINT + $(links).find("a.more").first().attr()["href"];
   }
 
   if (results.prevLink) {
@@ -284,7 +229,7 @@ export function ParseSubmissionsPaging(body: string, results: IPagingResults): I
         startAt: startAt as any,
         perpage: perpage as any
       };
-      results.prev = () => Submissions(options);
+      results.prev = () => submissions(options);
     }
   }
 
@@ -300,7 +245,7 @@ export function ParseSubmissionsPaging(body: string, results: IPagingResults): I
         startAt: startAt as any,
         perpage: perpage as any
       };
-      results.next = () => Submissions(options);
+      results.next = () => submissions(options);
     }
   }
 
@@ -328,7 +273,8 @@ export function ParseSubmission(body: string, id: string): ISubmission {
 
   // buttons
   let downloadUrl: string = `http:${sidebar.find(".buttons .download a")[0].attribs.href}`;
-  const favLink: string = `http://furaffinity.net${sidebar.find(".buttons .fav a")[0].attribs.href}`;
+  const favLinkNode = sidebar.find(".buttons .fav a")[0];
+  const favLink = favLinkNode ? `http://furaffinity.net${favLinkNode.attribs.href}` : undefined;
 
   // header
   const title: string = content.find(".submission-id-sub-container .submission-title p")[0].childNodes[0].data?.trim() ?? "";
@@ -387,9 +333,11 @@ export function ParseSubmission(body: string, id: string): ISubmission {
         return tag.childNodes[0].data?.trim() ?? "";
       })
       .get(),
-    fave: async () => {
-      await FaveSubmission(favLink);
-    }
+    fave: favLink
+      ? async () => {
+          await FaveSubmission(favLink);
+        }
+      : undefined
   };
 }
 
@@ -402,10 +350,7 @@ export function ParseAuthor(body: string): IAuthor {
 
   checkSystemMessage($);
 
-  const name: string =
-    $(".userpage-flex-item.username span")[0]
-      .childNodes[0].data?.trim()
-      .slice(1) ?? "";
+  const name: string = $(".userpage-flex-item.username span")[0].childNodes[0].data?.trim().slice(1) ?? "";
   const id: string = convertNameToId(name);
   const url: string = `http://www.furaffinity.net/user/${id}`;
   const shinies: boolean = !!$(".userpage-layout-left-col-content > a:nth-child(4)");
@@ -473,10 +418,7 @@ export function ParseMyWatchingList(body: string): IAuthor[] {
   return $(".flex-item-watchlist")
     .map((index, div) => {
       const avatar = `https:${$(div).find("img.avatar")[0].attribs.src}`;
-      const name =
-        $(div)
-          .find(".flex-item-watchlist-controls a strong")[0]
-          .childNodes[0].data?.trim() ?? "";
+      const name = $(div).find(".flex-item-watchlist-controls a strong")[0].childNodes[0].data?.trim() ?? "";
       const id = convertNameToId(name);
       const url = `${ENDPOINT}/user/${id}`;
 

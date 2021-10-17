@@ -1,7 +1,21 @@
+export interface ITestConfig {
+  loginOptions: {
+    cookieA: string;
+    cookieB: string;
+  };
+  watchOptions: {
+    userId: string;
+    shouldContainUserId: string;
+  };
+  authorOptions: {
+    userId: string;
+  };
+}
+
 export const options: ITestConfig = {
   loginOptions: {
-    cookieA: "c73b00e6-1383-45a5-9d10-97412a60a467", // your cookies
-    cookieB: "8576a844-2dc2-4c48-894e-13e26863411b"
+    cookieA: "cc08dd90-c453-49c7-8144-2e6ffe1197d7", // your cookies
+    cookieB: "b53dbcb1-394c-4aac-b973-040c8ea1844c"
   },
   watchOptions: {
     userId: "meeken",

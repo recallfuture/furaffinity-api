@@ -6,13 +6,13 @@ import _ from "lodash";
 export const ENDPOINT = "https://www.furaffinity.net";
 export const COOKIES = { loggedIn: false, a: "", b: "" };
 
-export function Login(cookieA: string, cookieB: string) {
+export function login(cookieA: string, cookieB: string) {
   COOKIES.loggedIn = true;
   COOKIES.a = cookieA;
   COOKIES.b = cookieB;
 }
 
-export function SetProxy(config?: false | string) {
+export function setProxy(config?: false | string) {
   cloudscraper.defaults({ proxy: config });
 }
 
@@ -91,15 +91,15 @@ export async function FetchSearch(query: string, options?: SearchOptions): Promi
     url,
     method: "post",
     formData: {
-      "rating-general": (options?.rating || Rating.Any) & Rating.General ? "on" : "off",
-      "rating-mature": (options?.rating || Rating.Any) & Rating.Mature ? "on" : "off",
-      "rating-adult": (options?.rating || Rating.Any) & Rating.Adult ? "on" : "off",
-      "type-art": (options?.type || SearchType.All) & SearchType.Art ? "on" : "off",
-      "type-flash": (options?.type || SearchType.All) & SearchType.Flash ? "on" : "off",
-      "type-photo": (options?.type || SearchType.All) & SearchType.Photos ? "on" : "off",
-      "type-music": (options?.type || SearchType.All) & SearchType.Music ? "on" : "off",
-      "type-story": (options?.type || SearchType.All) & SearchType.Story ? "on" : "off",
-      "type-poetry": (options?.type || SearchType.All) & SearchType.Poetry ? "on" : "off",
+      "rating-general": (options?.rating || Rating.Any) & Rating.General ? "on" : undefined,
+      "rating-mature": (options?.rating || Rating.Any) & Rating.Mature ? "on" : undefined,
+      "rating-adult": (options?.rating || Rating.Any) & Rating.Adult ? "on" : undefined,
+      "type-art": (options?.type || SearchType.All) & SearchType.Art ? "on" : undefined,
+      "type-flash": (options?.type || SearchType.All) & SearchType.Flash ? "on" : undefined,
+      "type-photo": (options?.type || SearchType.All) & SearchType.Photos ? "on" : undefined,
+      "type-music": (options?.type || SearchType.All) & SearchType.Music ? "on" : undefined,
+      "type-story": (options?.type || SearchType.All) & SearchType.Story ? "on" : undefined,
+      "type-poetry": (options?.type || SearchType.All) & SearchType.Poetry ? "on" : undefined,
       page,
       prev_page: options?.prev ? "Back" : undefined,
       next_page: options?.prev ? undefined : "Next",
@@ -115,9 +115,9 @@ export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
     url,
     method: "post",
     formData: {
-      rating_general: (options?.rating || 0x7) & Rating.General ? "on" : "off",
-      rating_mature: (options?.rating || 0x7) & Rating.Mature ? "on" : "off",
-      rating_adult: (options?.rating || 0x7) & Rating.Adult ? "on" : "off",
+      rating_general: (options?.rating || 0x7) & Rating.General ? "on" : undefined,
+      rating_mature: (options?.rating || 0x7) & Rating.Mature ? "on" : undefined,
+      rating_adult: (options?.rating || 0x7) & Rating.Adult ? "on" : undefined,
       cat: options?.category || 1,
       atype: options?.tag || 1,
       species: options?.species || 1,

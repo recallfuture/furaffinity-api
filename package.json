@@ -28,6 +28,7 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.15.8",
     "@babel/preset-typescript": "^7.15.0",
     "@types/chai": "^4.2.9",
     "@types/cheerio": "0.22.21",

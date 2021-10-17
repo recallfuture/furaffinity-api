@@ -47,7 +47,7 @@ export interface ISubmission {
   title: string;
   posted: number;
   rating: Rating;
-  favLink: string;
+  favLink?: string;
   author: IAuthor;
   content: {
     category: Category;
@@ -62,5 +62,10 @@ export interface ISubmission {
   downloadUrl: string;
   previewUrl?: string;
   keywords: string[];
-  fave(): Promise<void>;
+  fave?(): Promise<void>;
 }
+
+export type Author = IAuthor;
+export type Result = IResult;
+export type PagingResults = IPagingResults;
+export type Submission = ISubmission;

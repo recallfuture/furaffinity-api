@@ -28,17 +28,20 @@ npm install furaffinity-api
 
 ## APIs
 
+> 从 4.1.0 开始，你可以通过 lowerCase 来调用任意 API。
+> （例如，`const {login, search} form "furaffinity-api";`）
+
 ### Login(a: string, b: string)
 
 使用 cookie 登录 furaffinity
 
 ```js
-import { Login } from "furaffinity-api"
+import { Login } from "furaffinity-api";
 // or
-const { Login } = require("furaffinity-api")
+const { Login } = require("furaffinity-api");
 
 // to allow all results to be accessible, add your cookies
-Login("cookie_a", "cookie_b")
+Login("cookie_a", "cookie_b");
 ```
 
 ### Search(query: string, options: SearchOptions)
@@ -61,7 +64,7 @@ Search('search query', { /** SearchOptions */ type?, rating?, page? }).then(res 
 获取浏览页作品
 
 ```js
-import { Browse } from "furaffinity-api"
+import { Browse } from "furaffinity-api";
 
 Browse({
   /** BrowseOptions */
@@ -69,8 +72,8 @@ Browse({
   // 结果
   res[0].getSubmission().then((submission) => {
     // 作品详情
-  })
-})
+  });
+});
 ```
 
 ### Submission(id: string)
@@ -78,11 +81,11 @@ Browse({
 获取特定的作品
 
 ```js
-import { Submission } from "furaffinity-api"
+import { Submission } from "furaffinity-api";
 
 Submission("1234567890").then((res) => {
   // res is a Submission
-})
+});
 ```
 
 ### User()
@@ -90,11 +93,11 @@ Submission("1234567890").then((res) => {
 获取当前用户信息
 
 ```js
-import { User } from "furaffinity-api"
+import { User } from "furaffinity-api";
 
 User().then((user) => {
   // console.log(user);
-})
+});
 ```
 
 ### Author(id: string)
@@ -102,15 +105,15 @@ User().then((user) => {
 获取某个作者的用户信息
 
 ```js
-import { Author, WatchingList } from "furaffinity-api"
+import { Author, WatchingList } from "furaffinity-api";
 
 Author("user_id").then((res) => {
   // 某作者信息
   // 包含 id, name, url and avatar(可能为 undefined)
   WatchingList(res.id).then((list) => {
     // 查询该作者的关注列表
-  })
-})
+  });
+});
 ```
 
 ### Gallery(id: string)
@@ -118,14 +121,14 @@ Author("user_id").then((res) => {
 获取某用户的画廊
 
 ```js
-import { Gallery } from "furaffinity-api"
+import { Gallery } from "furaffinity-api";
 
 Gallery("author_id").then((res) => {
   // 结果
   res[0].getSubmission().then((submission) => {
     // 作品详情
-  })
-})
+  });
+});
 ```
 
 ### Scraps(id: string)
@@ -133,14 +136,14 @@ Gallery("author_id").then((res) => {
 获取某用户废弃作品
 
 ```js
-import { Scraps } from "furaffinity-api"
+import { Scraps } from "furaffinity-api";
 
 Scraps("author_id").then((res) => {
   // 结果
   res[0].getSubmission().then((submission) => {
     // 作品详情
-  })
-})
+  });
+});
 ```
 
 ### Submissions()
@@ -148,14 +151,14 @@ Scraps("author_id").then((res) => {
 根据时间线，获取作品详情
 
 ```js
-import { Submissions } from "furaffinity-api"
+import { Submissions } from "furaffinity-api";
 
 Submissions().then((res) => {
   // 结果
   res[0].getSubmission().then((submission) => {
     // 某条作品详情
-  })
-})
+  });
+});
 ```
 
 ### WatchingList(id: string)
@@ -163,11 +166,11 @@ Submissions().then((res) => {
 获取某用户的关注列表（暂不能获取头像）
 
 ```js
-import { WatchingList } from "furaffinity-api"
+import { WatchingList } from "furaffinity-api";
 
 WatchingList("author_id").then((list) => {
   // 作者列表
-})
+});
 ```
 
 ### MyWatchingList()
@@ -176,11 +179,11 @@ WatchingList("author_id").then((list) => {
 获取当前登录用户的关注列表（暂不能获取头像）
 
 ```js
-import { MyWatchingList } from "furaffinity-api"
+import { MyWatchingList } from "furaffinity-api";
 
 MyWatchingList().then((list) => {
   // 作者列表
-})
+});
 ```
 
 ## 测试
@@ -191,16 +194,16 @@ MyWatchingList().then((list) => {
 export const options: ITestConfig = {
   loginOptions: {
     cookieA: "your cookie a", // your cookies
-    cookieB: "your cookie b",
+    cookieB: "your cookie b"
   },
   watchOptions: {
     userId: "your userid",
-    shouldContainUserId: "userid you are watching",
+    shouldContainUserId: "userid you are watching"
   },
   authorOptions: {
-    userId: "your favorite author's userid",
-  },
-}
+    userId: "your favorite author's userid"
+  }
+};
 ```
 
 接着运行:

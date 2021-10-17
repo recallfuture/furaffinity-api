@@ -5,14 +5,14 @@ import { IAuthor, IPagingResults, IResult, ISubmission } from "./interfaces";
 export * from "./Enums";
 export * from "./interfaces";
 
-export { Login, SetProxy } from "./Request";
+export { login, setProxy } from "./Request";
 
 /**
  * Get results from search page
  * @param query search query
  * @param options search options
  */
-export async function Search(query: string, options?: SearchOptions): Promise<IPagingResults> {
+export async function search(query: string, options?: SearchOptions): Promise<IPagingResults> {
   const body = await FetchSearch(query, options);
   const results = ParseFigures(body);
   return ParseSearchPaging(body, results, query, options);
@@ -22,7 +22,7 @@ export async function Search(query: string, options?: SearchOptions): Promise<IP
  * Get results from browse page
  * @param options browse options
  */
-export async function Browse(options?: BrowseOptions): Promise<IPagingResults> {
+export async function browse(options?: BrowseOptions): Promise<IPagingResults> {
   const body = await FetchBrowse(options);
   const results = ParseFigures(body);
   return ParseBrowsePaging(body, results, options);
@@ -32,7 +32,7 @@ export async function Browse(options?: BrowseOptions): Promise<IPagingResults> {
  * Get results from submissions timeline page
  * @param options submissions options
  */
-export async function Submissions(options?: SubmissionsOptions): Promise<IPagingResults> {
+export async function submissions(options?: SubmissionsOptions): Promise<IPagingResults> {
   const body = await FetchSubmissions(options);
   const results = ParseFigures(body);
   return ParseSubmissionsPaging(body, results);
@@ -42,14 +42,14 @@ export async function Submissions(options?: SubmissionsOptions): Promise<IPaging
  * Get submission's info by pass submission id
  * @param id submission id
  */
-export async function Submission(id: string): Promise<ISubmission> {
+export async function submission(id: string): Promise<ISubmission> {
   return ParseSubmission(await FetchSubmission(id), id);
 }
 
 /**
  * Get the current logged in user
  */
-export async function User(): Promise<IAuthor> {
+export async function user(): Promise<IAuthor> {
   return ParseAuthor(await FetchHome());
 }
 
@@ -57,7 +57,7 @@ export async function User(): Promise<IAuthor> {
  * Get author's info by pass author id
  * @param id author id
  */
-export async function Author(id: string): Promise<IAuthor> {
+export async function author(id: string): Promise<IAuthor> {
   return ParseAuthor(await FetchAuthor(id));
 }
 
@@ -66,7 +66,7 @@ export async function Author(id: string): Promise<IAuthor> {
  * @param id author id
  * @param page page number
  */
-export async function Gallery(id: string, page: number, perpage: number = 72): Promise<IPagingResults> {
+export async function gallery(id: string, page: number, perpage: number = 72): Promise<IPagingResults> {
   const body = await FetchGallery(id, page, perpage);
   const results = ParseFigures(body);
   return ParseGalleryPaging(body, results, perpage);
@@ -77,7 +77,7 @@ export async function Gallery(id: string, page: number, perpage: number = 72): P
  * @param id author id
  * @param page page number
  */
-export async function Scraps(id: string, page: number, perpage: number = 72): Promise<IPagingResults> {
+export async function scraps(id: string, page: number, perpage: number = 72): Promise<IPagingResults> {
   const body = await FetchScraps(id, page, perpage);
   const results = ParseFigures(body);
   return ParseScrapsPaging(body, results, perpage);
@@ -88,7 +88,7 @@ export async function Scraps(id: string, page: number, perpage: number = 72): Pr
  * result don't has avatar
  * @param id author id
  */
-export async function WatchingList(id: string): Promise<IAuthor[]> {
+export async function watchingList(id: string): Promise<IAuthor[]> {
   let result: IAuthor[] = [];
   let page = 1;
 
@@ -108,7 +108,7 @@ export async function WatchingList(id: string): Promise<IAuthor[]> {
  * this can only use after login
  * result has avatar
  */
-export async function MyWatchingList(): Promise<IAuthor[]> {
+export async function myWatchingList(): Promise<IAuthor[]> {
   let result: IAuthor[] = [];
   let page = 1;
 
@@ -122,3 +122,16 @@ export async function MyWatchingList(): Promise<IAuthor[]> {
 
   return result;
 }
+
+// 兼容原来的命名
+export { login as Login, setProxy as SetProxy } from "./Request";
+export const Search = search;
+export const Browse = browse;
+export const Submissions = submissions;
+export const Submission = submission;
+export const User = user;
+export const Author = author;
+export const Gallery = gallery;
+export const Scraps = scraps;
+export const WatchingList = watchingList;
+export const MyWatchingList = myWatchingList;

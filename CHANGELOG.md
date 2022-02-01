@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### 4.2.0
+
+### Change
+
+- Type Submission add description #7
+
 ### 4.1.0
 
 ### Fixes

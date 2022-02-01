@@ -283,6 +283,7 @@ export function ParseSubmission(body: string, id: string): ISubmission {
   const posted: string = content.find(".submission-id-sub-container strong span")[0].attribs.title;
   const authorAvatar: string = `http:${content.find(".submission-id-avatar img")[0].attribs.src}`;
   const authorShinies: boolean = !!$(".shinies-promo");
+  const description: string = content.find(".submission-description").html()?.trim() ?? "";
 
   // stats
   const rating: Rating = Rating[stats.find(".rating span")[0].childNodes[0].data?.trim() as keyof typeof Rating];
@@ -316,6 +317,7 @@ export function ParseSubmission(body: string, id: string): ISubmission {
       avatar: authorAvatar,
       shinies: authorShinies
     },
+    description,
     content: {
       category,
       species,

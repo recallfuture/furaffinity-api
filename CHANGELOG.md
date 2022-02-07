@@ -1,10 +1,16 @@
 ## CHANGELOG
 
+### 4.3.0
+
+### Change
+
+- Add function removeFromInbox [#8](https://github.com/recallfuture/furaffinity-api/issues/8)
+
 ### 4.2.0
 
 ### Change
 
-- Type Submission add description #7
+- Type Submission add description [#7](https://github.com/recallfuture/furaffinity-api/issues/7)
 
 ### 4.1.0
 
@@ -18,7 +24,7 @@
 - rename all api to lower-case
 - rename all interface with prefix "I"
 
-close #1, close #2;
+close [#5](https://github.com/recallfuture/furaffinity-api/issues/5), close [#6](https://github.com/recallfuture/furaffinity-api/issues/6);
 
 ### 4.0.1
 
@@ -35,7 +41,7 @@ close #1, close #2;
 ### 3.5.1
 
 - Use "Connection: Keep-Alive" to improve speed.
-- [#3](https://github.com/recallfuture/furaffinity-api/issues/3) Fix SearchOptions and BrowserOptions doesn't work.
+- Fix SearchOptions and BrowserOptions doesn't work. close [#3](https://github.com/recallfuture/furaffinity-api/issues/3)
 
 ### v3.5.0
 

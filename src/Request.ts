@@ -170,3 +170,15 @@ export async function FetchMyWatchingList(page: number = 1): Promise<string> {
   const url = `${ENDPOINT}/controls/buddylist/${page}`;
   return await request({ url });
 }
+
+export async function RequestRemoveFromInbox(viewIds: string[]): Promise<void> {
+  const url = `${ENDPOINT}/msg/submissions/new`;
+  await request({
+    url,
+    method: "post",
+    formData: {
+      "submissions[]": viewIds,
+      "messagecenter-action": "remove_checked"
+    }
+  });
+}

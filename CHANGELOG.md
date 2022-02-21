@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### 4.3.1
+
+### Fix
+
+- Fix dependency [#9](https://github.com/recallfuture/furaffinity-api/issues/9)
+
 ### 4.3.0
 
 ### Change

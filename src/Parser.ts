@@ -155,14 +155,12 @@ export function ParseSearchPaging(body: string, results: IPagingResults, query: 
   if (!classNames(links[0]).includes("disabled")) {
     const newOptions = cloneDeep(options || {});
     newOptions.page = newOptions.page ? newOptions.page - 1 : 1;
-    newOptions.prev = true;
     results.prev = () => search(query, newOptions);
   }
 
   if (!classNames(links[1]).includes("disabled")) {
     const newOptions = cloneDeep(options || {});
     newOptions.page = newOptions.page ? newOptions.page + 1 : 2;
-    newOptions.prev = false;
     results.next = () => search(query, newOptions);
   }
 

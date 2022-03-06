@@ -1,4 +1,4 @@
-import { Rating, SearchType, Category, Tag, Species, Gender } from "./Enums";
+import { Rating, SearchType, OrderBy, OrderDirection, RangeType, MatchMode, Category, Tag, Species, Gender } from "./Enums";
 import Request from "request";
 import { default as cloudscraper, Response } from "cloudscraper";
 import _ from "lodash";
@@ -17,10 +17,20 @@ export function setProxy(config?: false | string) {
 }
 
 export interface SearchOptions {
+  /** start at 1 */
   page?: number;
   rating?: Rating;
   type?: SearchType;
-  prev?: boolean;
+  /** default 'relevancy' */
+  orderBy?: OrderBy;
+  /** default 'desc' */
+  orderDirection?: OrderDirection;
+  /** default 'all' */
+  range?: RangeType;
+  range_from?: Date;
+  range_to?: Date;
+  /** default extended */
+  matchMode?: MatchMode;
 }
 
 export interface BrowseOptions {
@@ -84,26 +94,28 @@ export async function FetchHome(): Promise<string> {
 
 export async function FetchSearch(query: string, options?: SearchOptions): Promise<string> {
   const url = `${ENDPOINT}/search`;
-
-  const page = options?.prev ? (options?.page || 1) + 1 : (options?.page || 1) - 1;
+  const { page = 1, rating = Rating.Any, type = SearchType.All, orderBy = "relevancy", orderDirection = "desc", range = "all", range_from, range_to, matchMode = "extended" } = options || {};
 
   return await request({
     url,
     method: "post",
     formData: {
-      "rating-general": (options?.rating || Rating.Any) & Rating.General ? "on" : undefined,
-      "rating-mature": (options?.rating || Rating.Any) & Rating.Mature ? "on" : undefined,
-      "rating-adult": (options?.rating || Rating.Any) & Rating.Adult ? "on" : undefined,
-      "type-art": (options?.type || SearchType.All) & SearchType.Art ? "on" : undefined,
-      "type-flash": (options?.type || SearchType.All) & SearchType.Flash ? "on" : undefined,
-      "type-photo": (options?.type || SearchType.All) & SearchType.Photos ? "on" : undefined,
-      "type-music": (options?.type || SearchType.All) & SearchType.Music ? "on" : undefined,
-      "type-story": (options?.type || SearchType.All) & SearchType.Story ? "on" : undefined,
-      "type-poetry": (options?.type || SearchType.All) & SearchType.Poetry ? "on" : undefined,
+      "rating-general": rating & Rating.General ? 1 : undefined,
+      "rating-mature": rating & Rating.Mature ? 1 : undefined,
+      "rating-adult": rating & Rating.Adult ? 1 : undefined,
+      "type-art": type & SearchType.Art ? 1 : undefined,
+      "type-flash": type & SearchType.Flash ? 1 : undefined,
+      "type-photo": type & SearchType.Photos ? 1 : undefined,
+      "type-music": type & SearchType.Music ? 1 : undefined,
+      "type-story": type & SearchType.Story ? 1 : undefined,
+      "type-poetry": type & SearchType.Poetry ? 1 : undefined,
       page,
-      prev_page: options?.prev ? "Back" : undefined,
-      next_page: options?.prev ? undefined : "Next",
-      mode: "extended",
+      mode: matchMode,
+      "order-by": orderBy,
+      "order-direction": orderDirection,
+      range,
+      range_from,
+      range_to,
       q: query
     }
   });

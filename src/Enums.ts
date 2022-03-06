@@ -22,6 +22,11 @@ export enum Rating {
   Any = 0x7
 }
 
+export type RangeType = "all" | "5years" | "3years" | "1year" | "90days" | "30days" | "7days" | "3days" | "1day" | "manual";
+export type MatchMode = "extended" | "all" | "any";
+export type OrderBy = "relevancy" | "date" | "popularity";
+export type OrderDirection = "asc" | "desc";
+
 export enum Category {
   "All" = 1,
   "Artwork (Digital)" = 2,

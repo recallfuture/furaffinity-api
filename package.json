@@ -1,13 +1,13 @@
 {
   "name": "furaffinity-api",
-  "version": "4.3.2",
+  "version": "4.3.3",
   "description": "FurAffinity wrapper for Node.js",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "dev": "tsc-watch --compiler typescript/bin/tsc",
     "build": "rimraf ./dist && tsc",
-    "prepublish": "npm run build"
+    "publish": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",

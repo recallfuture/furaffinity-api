@@ -1,5 +1,37 @@
 ## CHANGELOG
 
+### 4.3.2
+
+### Fix
+
+- Fix Search [#10](https://github.com/recallfuture/furaffinity-api/issues/10)
+
+### Change
+
+- Remove option "prev" from SearchOptions
+- Add full SearchOptions
+
+```js
+export interface SearchOptions {
+  /** start at 1 */
+  page?: number;
+  rating?: Rating;
+  type?: SearchType;
+
+  // new options
+  /** default 'relevancy' */
+  orderBy?: OrderBy;
+  /** default 'desc' */
+  orderDirection?: OrderDirection;
+  /** default 'all' */
+  range?: RangeType;
+  range_from?: Date;
+  range_to?: Date;
+  /** default extended */
+  matchMode?: MatchMode;
+}
+```
+
 ### 4.3.1
 
 ### Fix

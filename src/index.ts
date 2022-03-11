@@ -5,7 +5,7 @@ import { IAuthor, IPagingResults, IResult, ISubmission } from "./interfaces";
 export * from "./Enums";
 export * from "./interfaces";
 
-export { login, setProxy } from "./Request";
+export { login, logout, setProxy } from "./Request";
 
 /**
  * Get results from search page

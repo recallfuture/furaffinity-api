@@ -1,19 +1,57 @@
 import { Rating, SearchType, OrderBy, OrderDirection, RangeType, MatchMode, Category, Tag, Species, Gender } from "./Enums";
-import Request from "request";
-import { default as cloudscraper, Response } from "cloudscraper";
-import _ from "lodash";
+import type { Agents } from "got";
+import hooman from "hooman";
+import { CookieJar } from "tough-cookie";
+import { HttpProxyAgent, HttpsProxyAgent } from "hpagent";
+
+let agent: Agents = {};
+const cookieJar = new CookieJar();
+const got = hooman.extend({
+  cookieJar,
+  http2: true,
+  maxRedirects: 3,
+});
 
 export const ENDPOINT = "https://www.furaffinity.net";
-export const COOKIES = { loggedIn: false, a: "", b: "" };
 
+/**
+ * Use cookies to login
+ * @param cookieA cookie a from furaffinity.net
+ * @param cookieB cookie b from furaffinity.net
+ */
 export function login(cookieA: string, cookieB: string) {
-  COOKIES.loggedIn = true;
-  COOKIES.a = cookieA;
-  COOKIES.b = cookieB;
+  cookieJar.setCookieSync(`a=${cookieA};`, ENDPOINT);
+  cookieJar.setCookieSync(`b=${cookieB};`, ENDPOINT);
 }
 
-export function setProxy(config?: false | string) {
-  cloudscraper.defaults({ proxy: config });
+/**
+ * Remove all cookies to logout
+ */
+export function logout() {
+  cookieJar.removeAllCookiesSync();
+}
+
+/**
+ * Set proxy for api request
+ * @param url proxy url, support http and https
+ */
+export function setProxy(url?: string) {
+  if (!url) {
+    agent = {};
+    return;
+  }
+
+  if (url.startsWith("http")) {
+    const proxy = new HttpProxyAgent({
+      proxy: url
+    })
+    agent = { http: proxy };
+  } else if (url.startsWith("https")) {
+    const proxy = new HttpsProxyAgent({
+      proxy: url
+    })
+    agent = { https: proxy };
+  }
 }
 
 export interface SearchOptions {
@@ -49,57 +87,18 @@ export interface SubmissionsOptions {
   perpage?: 24 | 48 | 72;
 }
 
-/**
- * util to request
- * @param options options
- */
-function request(options: (Request.UriOptions & Request.CoreOptions) | (Request.UrlOptions & Request.CoreOptions)): Promise<string> {
-  return new Promise((resolve, reject) => {
-    options = _.merge(
-      {
-        headers: COOKIES.loggedIn
-          ? {
-              Cookie: `a=${COOKIES.a}; b=${COOKIES.b}`,
-              Connection: "Keep-Alive"
-            }
-          : {
-              Connection: "Keep-Alive"
-            },
-        agentOptions: {
-          keepAlive: true,
-          maxSockets: Infinity
-        }
-      },
-      options
-    );
-
-    cloudscraper(options, (error: any, response: Response, body: string) => {
-      if (error) {
-        console.error(error);
-        reject();
-      }
-      if (response.statusCode !== 200) {
-        console.error(`${response.statusCode}: `, response.statusMessage);
-        reject();
-      }
-
-      resolve(body);
-    });
-  });
-}
-
 export async function FetchHome(): Promise<string> {
-  return await request({ url: `${ENDPOINT}/me` });
+  const res = await got.get(`${ENDPOINT}/me`, { agent });
+  return res.body;
 }
 
 export async function FetchSearch(query: string, options?: SearchOptions): Promise<string> {
   const url = `${ENDPOINT}/search`;
   const { page = 1, rating = Rating.Any, type = SearchType.All, orderBy = "relevancy", orderDirection = "desc", range = "all", range_from, range_to, matchMode = "extended" } = options || {};
 
-  return await request({
-    url,
-    method: "post",
-    formData: {
+  const res = await got.post(url, {
+    agent,
+    form: {
       "rating-general": rating & Rating.General ? 1 : undefined,
       "rating-mature": rating & Rating.Mature ? 1 : undefined,
       "rating-adult": rating & Rating.Adult ? 1 : undefined,
@@ -119,14 +118,15 @@ export async function FetchSearch(query: string, options?: SearchOptions): Promi
       q: query
     }
   });
+  return res.body;
 }
 
 export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
   const url = `${ENDPOINT}/browse`;
-  return await request({
-    url,
-    method: "post",
-    formData: {
+
+  const res = await got.post(url, {
+    agent,
+    form: {
       rating_general: (options?.rating || 0x7) & Rating.General ? "on" : undefined,
       rating_mature: (options?.rating || 0x7) & Rating.Mature ? "on" : undefined,
       rating_adult: (options?.rating || 0x7) & Rating.Adult ? "on" : undefined,
@@ -139,21 +139,25 @@ export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
       page: options?.page || 1
     }
   });
+  return res.body;
 }
 
 export async function FetchGallery(id: string, page: number = 1, perpage?: number): Promise<string> {
   const url = `${ENDPOINT}/gallery/${id}/${page}?perpage=${perpage}`;
-  return await request({ url });
+  const res = await got.get(url, { agent });
+  return res.body;
 }
 
 export async function FetchScraps(id: string, page: number = 1, perpage?: number): Promise<string> {
   const url = `${ENDPOINT}/scraps/${id}/${page}?perpage=${perpage}`;
-  return await request({ url });
+  const res = await got.get(url, { agent });
+  return res.body;
 }
 
 export async function FetchSubmission(id: string): Promise<string> {
   const url = `${ENDPOINT}/view/${id}`;
-  return await request({ url });
+  const res = await got.get(url, { agent });
+  return res.body;
 }
 
 export async function FetchSubmissions(options?: SubmissionsOptions): Promise<string> {
@@ -161,36 +165,40 @@ export async function FetchSubmissions(options?: SubmissionsOptions): Promise<st
   const sort = options?.sort || "new";
   const perpage = options?.perpage || 72;
   const url = `${ENDPOINT}/msg/submissions/${sort}${startAt}@${perpage}`;
-  return await request({ url });
+  const res = await got.get(url, { agent });
+  return res.body;
 }
 
 export async function FaveSubmission(favLink: string): Promise<void> {
-  await request({ url: favLink });
+  await got.get(favLink, { agent });
 }
 
 export async function FetchAuthor(id: string): Promise<string> {
   const url = `${ENDPOINT}/user/${id}`;
-  return await request({ url });
+  const res = await got.get(url, { agent });
+  return res.body;
 }
 
 export async function FetchWatchingList(id: string, page: number = 1): Promise<string> {
   const url = `${ENDPOINT}/watchlist/by/${id}/${page}`;
-  return await request({ url });
+  const res = await got.get(url);
+  return res.body;
 }
 
 export async function FetchMyWatchingList(page: number = 1): Promise<string> {
   const url = `${ENDPOINT}/controls/buddylist/${page}`;
-  return await request({ url });
+  const res = await got.get(url, { agent });
+  return res.body;
 }
 
 export async function RequestRemoveFromInbox(viewIds: string[]): Promise<void> {
   const url = `${ENDPOINT}/msg/submissions/new`;
-  await request({
-    url,
-    method: "post",
-    formData: {
-      "submissions[]": viewIds,
-      "messagecenter-action": "remove_checked"
-    }
+  await got.post(url, {
+    agent,
+    form: [
+      ...viewIds.map(id => (["submissions[]", id])),
+      ["messagecenter-action", "remove_checked"]
+    ],
+    followRedirect: false
   });
 }

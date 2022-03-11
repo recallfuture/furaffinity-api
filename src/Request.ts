@@ -27,8 +27,8 @@ export interface SearchOptions {
   orderDirection?: OrderDirection;
   /** default 'all' */
   range?: RangeType;
-  range_from?: Date;
-  range_to?: Date;
+  rangeFrom?: Date;
+  rangeTo?: Date;
   /** default extended */
   matchMode?: MatchMode;
 }
@@ -94,7 +94,7 @@ export async function FetchHome(): Promise<string> {
 
 export async function FetchSearch(query: string, options?: SearchOptions): Promise<string> {
   const url = `${ENDPOINT}/search`;
-  const { page = 1, rating = Rating.Any, type = SearchType.All, orderBy = "relevancy", orderDirection = "desc", range = "all", range_from, range_to, matchMode = "extended" } = options || {};
+  const { page = 1, rating = Rating.Any, type = SearchType.All, orderBy = "relevancy", orderDirection = "desc", range = "all", rangeFrom, rangeTo, matchMode = "extended" } = options || {};
 
   return await request({
     url,
@@ -114,8 +114,8 @@ export async function FetchSearch(query: string, options?: SearchOptions): Promi
       "order-by": orderBy,
       "order-direction": orderDirection,
       range,
-      range_from,
-      range_to,
+      range_from: rangeFrom?.toISOString(),
+      range_to: rangeTo?.toISOString(),
       q: query
     }
   });

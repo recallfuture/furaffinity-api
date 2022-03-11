@@ -1,4 +1,4 @@
-import { Search, Login, SearchType, Rating, SubmissionType } from "../src/index";
+import { Search, Login, SearchType, Rating } from "../src/index";
 import * as config from "./jest.config";
 const { cookieA, cookieB } = config.options.loginOptions;
 

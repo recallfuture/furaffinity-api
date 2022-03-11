@@ -28,6 +28,7 @@
     "hooman": "^1.2.6",
     "hpagent": "^0.1.2",
     "lodash.clonedeep": "^4.5.0",
+    "socks-proxy-agent": "^6.2.0-beta.0",
     "tough-cookie": "^4.0.0"
   },
   "devDependencies": {

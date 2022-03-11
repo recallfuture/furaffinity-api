@@ -2,13 +2,16 @@ import { Rating, SearchType, OrderBy, OrderDirection, RangeType, MatchMode, Cate
 import type { Agents } from "got";
 import hooman from "hooman";
 import { CookieJar } from "tough-cookie";
-import { HttpProxyAgent, HttpsProxyAgent } from "hpagent";
+import { HttpsProxyAgent } from "hpagent";
+import {SocksProxyAgent} from "socks-proxy-agent";
 
 let agent: Agents = {};
 const cookieJar = new CookieJar();
 const got = hooman.extend({
   cookieJar,
-  http2: true,
+  headers: {
+    'Connection': 'keep-alive'
+  },
   maxRedirects: 3,
 });
 
@@ -33,7 +36,7 @@ export function logout() {
 
 /**
  * Set proxy for api request
- * @param url proxy url, support http and https
+ * @param url proxy url, support http, https and socks
  */
 export function setProxy(url?: string) {
   if (!url) {
@@ -42,14 +45,12 @@ export function setProxy(url?: string) {
   }
 
   if (url.startsWith("http")) {
-    const proxy = new HttpProxyAgent({
-      proxy: url
-    })
-    agent = { http: proxy };
-  } else if (url.startsWith("https")) {
     const proxy = new HttpsProxyAgent({
       proxy: url
     })
+    agent = { https: proxy };
+  } else if (url.startsWith("socks")) {
+    const proxy = new SocksProxyAgent(url);
     agent = { https: proxy };
   }
 }

@@ -1,5 +1,22 @@
 ## CHANGELOG
 
+### 4.4.0
+
+### Fix
+
+- Rename SearchOption `range_from` `range_to` to `rangeFrom` `rangeTo` 
+- Fix date format to ISO string
+- Replae cloudscraper with hooman ([#12](https://github.com/recallfuture/furaffinity-api/pull/12))
+
+Cloudscraper is NO LONGER SUPPORTED AND IS DEPRECATED, so we need a new library, like hooman.
+
+Now, furaffinity-api use hooman(got) to make request, and use local instance, not modify global default config.
+
+### API change:
+
+- `setProxy(config?: false | string)` to `setProxy(url?: string)`
+- New logout api
+
 ### 4.3.3
 
 ### Fix

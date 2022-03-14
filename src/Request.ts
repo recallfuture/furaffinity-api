@@ -3,16 +3,16 @@ import type { Agents } from "got";
 import hooman from "hooman";
 import { CookieJar } from "tough-cookie";
 import { HttpsProxyAgent } from "hpagent";
-import {SocksProxyAgent} from "socks-proxy-agent";
+import { SocksProxyAgent } from "socks-proxy-agent";
 
 let agent: Agents = {};
 const cookieJar = new CookieJar();
 const got = hooman.extend({
   cookieJar,
   headers: {
-    'Connection': 'keep-alive'
+    Connection: "keep-alive"
   },
-  maxRedirects: 3,
+  maxRedirects: 3
 });
 
 export const ENDPOINT = "https://www.furaffinity.net";
@@ -47,7 +47,7 @@ export function setProxy(url?: string) {
   if (url.startsWith("http")) {
     const proxy = new HttpsProxyAgent({
       proxy: url
-    })
+    });
     agent = { https: proxy };
   } else if (url.startsWith("socks")) {
     const proxy = new SocksProxyAgent(url);
@@ -196,10 +196,7 @@ export async function RequestRemoveFromInbox(viewIds: string[]): Promise<void> {
   const url = `${ENDPOINT}/msg/submissions/new`;
   await got.post(url, {
     agent,
-    form: [
-      ...viewIds.map(id => (["submissions[]", id])),
-      ["messagecenter-action", "remove_checked"]
-    ],
+    form: [...viewIds.map((id) => ["submissions[]", id]), ["messagecenter-action", "remove_checked"]],
     followRedirect: false
   });
 }

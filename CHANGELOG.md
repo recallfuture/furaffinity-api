@@ -1,5 +1,15 @@
 ## CHANGELOG
 
+### 4.4.1
+
+### Fix
+
+- Rating in SearchOption doesn't work (#14)
+
+### Change
+
+- add `perpage` to SearchOptions
+
 ### 4.4.0
 
 ### Fix

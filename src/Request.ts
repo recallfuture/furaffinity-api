@@ -4,6 +4,9 @@ import hooman from "hooman";
 import { CookieJar } from "tough-cookie";
 import { HttpsProxyAgent } from "hpagent";
 import { SocksProxyAgent } from "socks-proxy-agent";
+import pickBy from "lodash/pickBy";
+
+const notUndefined = (value: any) => value !== undefined;
 
 let agent: Agents = {};
 const cookieJar = new CookieJar();
@@ -58,7 +61,11 @@ export function setProxy(url?: string) {
 export interface SearchOptions {
   /** start at 1 */
   page?: number;
+  /** default 72 */
+  perpage?: 24 | 48 | 72;
+  /** default Any */
   rating?: Rating;
+  /** default Any */
   type?: SearchType;
   /** default 'relevancy' */
   orderBy?: OrderBy;
@@ -73,18 +80,27 @@ export interface SearchOptions {
 }
 
 export interface BrowseOptions {
+  /** start at 1 */
   page?: number;
-  perpage?: number;
+  /** default 72 */
+  perpage?: 24 | 48 | 72;
+  /** default Any */
   rating?: Rating;
+  /** default All */
   category?: Category;
+  /** default All */
   tag?: Tag;
+  /** default Unspecified / Any */
   species?: Species;
+  /** default Any */
   gender?: Gender;
 }
 
 export interface SubmissionsOptions {
+  /** last page's id */
   startAt?: string;
   sort?: "new" | "old";
+  /** default 72 */
   perpage?: 24 | 48 | 72;
 }
 
@@ -95,11 +111,11 @@ export async function FetchHome(): Promise<string> {
 
 export async function FetchSearch(query: string, options?: SearchOptions): Promise<string> {
   const url = `${ENDPOINT}/search`;
-  const { page = 1, rating = Rating.Any, type = SearchType.All, orderBy = "relevancy", orderDirection = "desc", range = "all", rangeFrom, rangeTo, matchMode = "extended" } = options || {};
+  const { page = 1, perpage = 72, rating = Rating.Any, type = SearchType.All, orderBy = "relevancy", orderDirection = "desc", range = "all", rangeFrom, rangeTo, matchMode = "extended" } = options || {};
 
   const res = await got.post(url, {
     agent,
-    form: {
+    form: pickBy({
       "rating-general": rating & Rating.General ? 1 : undefined,
       "rating-mature": rating & Rating.Mature ? 1 : undefined,
       "rating-adult": rating & Rating.Adult ? 1 : undefined,
@@ -110,6 +126,7 @@ export async function FetchSearch(query: string, options?: SearchOptions): Promi
       "type-story": type & SearchType.Story ? 1 : undefined,
       "type-poetry": type & SearchType.Poetry ? 1 : undefined,
       page,
+      perpage,
       mode: matchMode,
       "order-by": orderBy,
       "order-direction": orderDirection,
@@ -117,7 +134,7 @@ export async function FetchSearch(query: string, options?: SearchOptions): Promi
       range_from: rangeFrom?.toISOString(),
       range_to: rangeTo?.toISOString(),
       q: query
-    }
+    }, notUndefined)
   });
   return res.body;
 }
@@ -127,7 +144,7 @@ export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
 
   const res = await got.post(url, {
     agent,
-    form: {
+    form: pickBy({
       rating_general: (options?.rating || 0x7) & Rating.General ? "on" : undefined,
       rating_mature: (options?.rating || 0x7) & Rating.Mature ? "on" : undefined,
       rating_adult: (options?.rating || 0x7) & Rating.Adult ? "on" : undefined,
@@ -138,7 +155,7 @@ export async function FetchBrowse(options?: BrowseOptions): Promise<string> {
       perpage: options?.perpage || 72,
       go: "Apply",
       page: options?.page || 1
-    }
+    }, notUndefined)
   });
   return res.body;
 }

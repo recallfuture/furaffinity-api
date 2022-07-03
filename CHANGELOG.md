@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### 4.4.2
+
+### Fix
+
+- Function Author not parsing correctly(#15)
+
 ### 4.4.1
 
 ### Fix

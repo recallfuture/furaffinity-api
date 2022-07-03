@@ -350,7 +350,7 @@ export function ParseAuthor(body: string): IAuthor {
 
   checkSystemMessage($);
 
-  const name: string = $(".userpage-flex-item.username span")[0].childNodes[0].data?.trim().slice(1) ?? "";
+  const name: string = $(".userpage-flex-item.username h2")[0].childNodes[0].data?.trim().slice(1) ?? "";
   const id: string = convertNameToId(name);
   const url: string = `http://www.furaffinity.net/user/${id}`;
   const shinies: boolean = !!$(".userpage-layout-left-col-content > a:nth-child(4)");

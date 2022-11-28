@@ -2,6 +2,8 @@ import { Search, Login, SearchType, Rating } from "../src/index";
 import * as config from "./jest.config";
 const { cookieA, cookieB } = config.options.loginOptions;
 
+jest.setTimeout(100000);
+
 test("Search and get submissions", async () => {
   Login(cookieA, cookieB);
   // default page is 1

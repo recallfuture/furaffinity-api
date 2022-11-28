@@ -350,11 +350,11 @@ export function ParseAuthor(body: string): IAuthor {
 
   checkSystemMessage($);
 
-  const name: string = $(".userpage-flex-item.username h2")[0].childNodes[0].data?.trim().slice(1) ?? "";
+  const name: string = $("userpage-nav-user-details username")[0].childNodes[0].data?.trim().slice(1) ?? "";
   const id: string = convertNameToId(name);
-  const url: string = `http://www.furaffinity.net/user/${id}`;
+  const url: string = `https://www.furaffinity.net/user/${id}`;
   const shinies: boolean = !!$(".userpage-layout-left-col-content > a:nth-child(4)");
-  const avatar: string = `https:${$(".user-nav-avatar")[0].attribs.src}`;
+  const avatar: string = `https:${$("userpage-nav-avatar img")[0].attribs.src}`;
 
   const statsCells = $(".userpage-section-right .cell");
   const views: string = statsCells[0].childNodes[2].data?.trim() ?? "0";

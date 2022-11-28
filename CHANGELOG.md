@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### 4.4.3
+
+### Fix
+
+- FA Website redesign (#16)
+
 ### 4.4.2
 
 ### Fix

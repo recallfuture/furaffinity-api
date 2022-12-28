@@ -49,6 +49,7 @@ export interface ISubmission {
   rating: Rating;
   favLink?: string;
   author: IAuthor;
+  description: string;
   content: {
     category: Category;
     species: Species;

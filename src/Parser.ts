@@ -155,14 +155,12 @@ export function ParseSearchPaging(body: string, results: IPagingResults, query: 
   if (!classNames(links[0]).includes("disabled")) {
     const newOptions = cloneDeep(options || {});
     newOptions.page = newOptions.page ? newOptions.page - 1 : 1;
-    newOptions.prev = true;
     results.prev = () => search(query, newOptions);
   }
 
   if (!classNames(links[1]).includes("disabled")) {
     const newOptions = cloneDeep(options || {});
     newOptions.page = newOptions.page ? newOptions.page + 1 : 2;
-    newOptions.prev = false;
     results.next = () => search(query, newOptions);
   }
 
@@ -283,6 +281,7 @@ export function ParseSubmission(body: string, id: string): ISubmission {
   const posted: string = content.find(".submission-id-sub-container strong span")[0].attribs.title;
   const authorAvatar: string = `http:${content.find(".submission-id-avatar img")[0].attribs.src}`;
   const authorShinies: boolean = !!$(".shinies-promo");
+  const description: string = content.find(".submission-description").html()?.trim() ?? "";
 
   // stats
   const rating: Rating = Rating[stats.find(".rating span")[0].childNodes[0].data?.trim() as keyof typeof Rating];
@@ -316,6 +315,7 @@ export function ParseSubmission(body: string, id: string): ISubmission {
       avatar: authorAvatar,
       shinies: authorShinies
     },
+    description,
     content: {
       category,
       species,
@@ -350,11 +350,11 @@ export function ParseAuthor(body: string): IAuthor {
 
   checkSystemMessage($);
 
-  const name: string = $(".userpage-flex-item.username span")[0].childNodes[0].data?.trim().slice(1) ?? "";
+  const name: string = $("userpage-nav-user-details username")[0].childNodes[0].data?.trim().slice(1) ?? "";
   const id: string = convertNameToId(name);
-  const url: string = `http://www.furaffinity.net/user/${id}`;
+  const url: string = `https://www.furaffinity.net/user/${id}`;
   const shinies: boolean = !!$(".userpage-layout-left-col-content > a:nth-child(4)");
-  const avatar: string = `https:${$(".user-nav-avatar")[0].attribs.src}`;
+  const avatar: string = `https:${$("userpage-nav-avatar img")[0].attribs.src}`;
 
   const statsCells = $(".userpage-section-right .cell");
   const views: string = statsCells[0].childNodes[2].data?.trim() ?? "0";

@@ -1,11 +1,11 @@
-import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps, FetchHome, FetchMyWatchingList, SubmissionsOptions, FetchSubmissions } from "./Request";
+import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps, FetchHome, FetchMyWatchingList, SubmissionsOptions, FetchSubmissions, RequestRemoveFromInbox } from "./Request";
 import { ParseFigures, ParseSubmission, ParseAuthor, ParseWatchingList, ParseMyWatchingList, ParseScrapsPaging, ParseGalleryPaging, ParseSubmissionsPaging, ParseBrowsePaging, ParseSearchPaging } from "./Parser";
 import { IAuthor, IPagingResults, IResult, ISubmission } from "./interfaces";
 
 export * from "./Enums";
 export * from "./interfaces";
 
-export { login, setProxy } from "./Request";
+export { login, logout, setProxy } from "./Request";
 
 /**
  * Get results from search page
@@ -121,6 +121,14 @@ export async function myWatchingList(): Promise<IAuthor[]> {
   }
 
   return result;
+}
+
+/**
+ * Remove submissions from submission inbox, only delete when it exists in inbox.
+ * @param viewIds submission id list
+ */
+export async function removeFromInbox(viewIds: string[]): Promise<void> {
+  await RequestRemoveFromInbox(viewIds);
 }
 
 // 兼容原来的命名

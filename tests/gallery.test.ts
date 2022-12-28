@@ -13,4 +13,5 @@ test("Gallery", async () => {
   const submissions = await results[0].getSubmission();
   expect(!!submissions.author).not.toBeFalsy();
   expect(results.nextLink).not.toBeNull();
+  expect(submissions.description).not.toBeNull();
 });

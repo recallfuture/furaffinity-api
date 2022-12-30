@@ -217,3 +217,7 @@ export async function RequestRemoveFromInbox(viewIds: string[]): Promise<void> {
     followRedirect: false
   });
 }
+
+export async function watchToggle(watchLink: string): Promise<void> {
+  await got.get(watchLink, { agent });
+}

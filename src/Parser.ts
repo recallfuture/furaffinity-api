@@ -3,7 +3,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { SubmissionType, Species, Category, Gender, Rating } from "./Enums";
 import { IAuthor, IPagingResults, IResult, ISubmission } from "./interfaces";
 import { browse, gallery, scraps, search, submission, submissions } from ".";
-import { BrowseOptions, ENDPOINT, FaveSubmission, SearchOptions, SubmissionsOptions } from "./Request";
+import { BrowseOptions, ENDPOINT, FaveSubmission, SearchOptions, SubmissionsOptions, watchToggle } from "./Request";
 
 /**
  * Convert author name to author id
@@ -355,7 +355,7 @@ export function ParseAuthor(body: string): IAuthor {
   const url: string = `https://www.furaffinity.net/user/${id}`;
   const shinies: boolean = !!$(".userpage-layout-left-col-content > a:nth-child(4)");
   const avatar: string = `https:${$("userpage-nav-avatar img")[0].attribs.src}`;
-
+  
   const statsCells = $(".userpage-section-right .cell");
   const views: string = statsCells[0].childNodes[2].data?.trim() ?? "0";
   const submissions: string = statsCells[0].childNodes[6].data?.trim() ?? "0";
@@ -363,7 +363,12 @@ export function ParseAuthor(body: string): IAuthor {
   const commentsEarned: string = statsCells[1].childNodes[2].data?.trim() ?? "0";
   const commentsMade: string = statsCells[1].childNodes[6].data?.trim() ?? "0";
   const journals: string = statsCells[1].childNodes[10].data?.trim() ?? "0";
-
+  
+  // TODO: add exception if author is user, if not already done
+  const watchButton = $("userpage-nav-interface-buttons a")[0];
+  const watchLink: string = `${ENDPOINT}${watchButton.attribs.href}` ?? "";
+  const watching = watchButton.attribs.class.includes('stop') ?? false;
+  
   return {
     id,
     name,
@@ -377,8 +382,14 @@ export function ParseAuthor(body: string): IAuthor {
 
       commentsEarned: Number.parseInt(commentsEarned),
       commentsMade: Number.parseInt(commentsMade),
-      journals: Number.parseInt(journals)
-    }
+      journals: Number.parseInt(journals),
+
+      watching
+    },
+    watchAuthor: !watching
+      ? async () => await watchToggle(watchLink) : undefined,
+    unwatchAuthor: watching
+    ? async () => await watchToggle(watchLink) : undefined
   };
 }
 

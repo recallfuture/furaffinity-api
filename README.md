@@ -186,6 +186,51 @@ MyWatchingList().then((list) => {
 });
 ```
 
+### removeFromInbox()
+
+**Login first**
+Remove submissions from submission inbox, only delete when it exists in inbox.:
+
+```js
+import { removeFromInbox } from "furaffinity-api";
+
+removeFromInbox(['viewId', 'viewId']);
+```
+
+### watchAuthor()
+
+**Login first**
+Watch author if haven't watched, no effact when watch yourself:
+
+```js
+import { watchAuthor } from "furaffinity-api";
+
+watchAuthor('userId');
+```
+
+### unwatchAuthor()
+
+**Login first**
+Unwatch author if already watched, no effact when unwatch yourself:
+
+```js
+import { unwatchAuthor } from "furaffinity-api";
+
+unwatchAuthor('userId');
+```
+
+
+### toggleWatch()
+
+**Login first**
+Request the watch link, link can be found from IAuthor, toggle watching state:
+
+```js
+import { toggleWatch } from "furaffinity-api";
+
+toggleWatch('https://www.furaffinity.net/watch/userid/?key=033d7e8f2860f80850557df7ed99120ac9f926e3');
+```
+
 ## Test
 
 Please improve the test configuration `/tests/jest.config.ts` before testing.

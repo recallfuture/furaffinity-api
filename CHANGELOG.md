@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### 4.5.0
+
+- Watch and unwatch artists (#17)
+
 ### 4.4.3
 
 ### Fix

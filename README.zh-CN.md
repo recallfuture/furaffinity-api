@@ -186,6 +186,51 @@ MyWatchingList().then((list) => {
 });
 ```
 
+### removeFromInbox()
+
+**Login first**
+从时间线中移除作品:
+
+```js
+import { removeFromInbox } from "furaffinity-api";
+
+removeFromInbox(['viewId', 'viewId']);
+```
+
+### watchAuthor()
+
+**Login first**
+关注一个用户，如果已关注则无效果:
+
+```js
+import { watchAuthor } from "furaffinity-api";
+
+watchAuthor('userId');
+```
+
+### unwatchAuthor()
+
+**Login first**
+取消关注一个用户，如果未关注则无效果:
+
+```js
+import { unwatchAuthor } from "furaffinity-api";
+
+unwatchAuthor('userId');
+```
+
+
+### toggleWatch()
+
+**Login first**
+请求 IAuthor 上拿到的 watchLink，用来切换关注状态:
+
+```js
+import { toggleWatch } from "furaffinity-api";
+
+toggleWatch('https://www.furaffinity.net/watch/userid/?key=033d7e8f2860f80850557df7ed99120ac9f926e3');
+```
+
 ## 测试
 
 在测试前，先在 `/tests/jest.config.ts` 中添加配置:

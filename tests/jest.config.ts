@@ -14,14 +14,14 @@ export interface ITestConfig {
 
 export const options: ITestConfig = {
   loginOptions: {
-    cookieA: "cc08dd90-c453-49c7-8144-2e6ffe1197d7", // your cookies
+    cookieA: "c0620986-f48a-4bd7-971c-2a25566e0a7d", // your cookies
     cookieB: "b53dbcb1-394c-4aac-b973-040c8ea1844c"
   },
   watchOptions: {
-    userId: "meeken",
-    shouldContainUserId: "axelferdinan"
+    userId: "recallfuture",
+    shouldContainUserId: "rudragon"
   },
   authorOptions: {
-    userId: "sunnytheholyfox"
+    userId: "rudragon"
   }
 };

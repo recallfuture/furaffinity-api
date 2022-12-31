@@ -1,4 +1,4 @@
-import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps, FetchHome, FetchMyWatchingList, SubmissionsOptions, FetchSubmissions, RequestRemoveFromInbox } from "./Request";
+import { SearchOptions, FetchSearch, FetchSubmission, BrowseOptions, FetchBrowse, FetchAuthor, FetchWatchingList, FetchGallery, FetchScraps, FetchHome, FetchMyWatchingList, SubmissionsOptions, FetchSubmissions, RequestRemoveFromInbox, RequestToggleWatch } from "./Request";
 import { ParseFigures, ParseSubmission, ParseAuthor, ParseWatchingList, ParseMyWatchingList, ParseScrapsPaging, ParseGalleryPaging, ParseSubmissionsPaging, ParseBrowsePaging, ParseSearchPaging } from "./Parser";
 import { IAuthor, IPagingResults, IResult, ISubmission } from "./interfaces";
 
@@ -130,6 +130,30 @@ export async function myWatchingList(): Promise<IAuthor[]> {
 export async function removeFromInbox(viewIds: string[]): Promise<void> {
   await RequestRemoveFromInbox(viewIds);
 }
+
+/**
+ * Watch author if haven't watched, no effact when watch yourself
+ * @param id author id
+ */
+export async function watchAuthor(id: string): Promise<void> {
+  const author = await Author(id);
+  await author.watchAuthor?.()
+}
+
+/**
+ * Unwatch author if already watched, no effact when unwatch yourself
+ * @param id author id
+ */
+export async function unwatchAuthor(id: string): Promise<void> {
+  const author = await Author(id);
+  await author.unwatchAuthor?.()
+}
+
+/**
+ * Request the given url, toggle watching state
+ * @param watchLink link for watch or unwatch, can be get from IAuthor
+ */
+export const toggleWatch = RequestToggleWatch;
 
 // 兼容原来的命名
 export { login as Login, setProxy as SetProxy } from "./Request";

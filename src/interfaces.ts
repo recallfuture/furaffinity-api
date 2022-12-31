@@ -6,6 +6,7 @@ export interface IAuthor {
   url: string;
   avatar?: string;
   shinies?: boolean;
+  watchLink?: string
   stats?: {
     views: number;
     submissions: number;
@@ -14,7 +15,11 @@ export interface IAuthor {
     commentsEarned: number;
     commentsMade: number;
     journals: number;
+  
+    watching: boolean;
   };
+  watchAuthor?(): Promise<void>;
+  unwatchAuthor?(): Promise<void>;
 }
 
 export interface IResult {

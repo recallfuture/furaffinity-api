@@ -3,7 +3,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { SubmissionType, Species, Category, Gender, Rating } from "./Enums";
 import { IAuthor, IPagingResults, IResult, ISubmission } from "./interfaces";
 import { browse, gallery, scraps, search, submission, submissions } from ".";
-import { BrowseOptions, ENDPOINT, FaveSubmission, SearchOptions, SubmissionsOptions, watchToggle } from "./Request";
+import { BrowseOptions, ENDPOINT, FaveSubmission, SearchOptions, SubmissionsOptions, RequestToggleWatch } from "./Request";
 
 /**
  * Convert author name to author id
@@ -366,15 +366,16 @@ export function ParseAuthor(body: string): IAuthor {
   
   // TODO: add exception if author is user, if not already done
   const watchButton = $("userpage-nav-interface-buttons a")[0];
-  const watchLink: string = `${ENDPOINT}${watchButton.attribs.href}` ?? "";
-  const watching = watchButton.attribs.class.includes('stop') ?? false;
-  
+  const watchLink = watchButton ? `${ENDPOINT}${watchButton.attribs.href}` : undefined;
+  const watching = watchButton ? watchButton.attribs.class.includes('stop') : false;
+
   return {
     id,
     name,
     url,
     avatar,
     shinies,
+    watchLink,
     stats: {
       views: Number.parseInt(views),
       submissions: Number.parseInt(submissions),
@@ -386,10 +387,10 @@ export function ParseAuthor(body: string): IAuthor {
 
       watching
     },
-    watchAuthor: !watching
-      ? async () => await watchToggle(watchLink) : undefined,
-    unwatchAuthor: watching
-    ? async () => await watchToggle(watchLink) : undefined
+    watchAuthor: !watching && watchLink
+      ? async () => await RequestToggleWatch(watchLink) : undefined,
+    unwatchAuthor: watching && watchLink
+    ? async () => await RequestToggleWatch(watchLink) : undefined
   };
 }
 

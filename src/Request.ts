@@ -199,7 +199,7 @@ export async function FetchAuthor(id: string): Promise<string> {
 
 export async function FetchWatchingList(id: string, page: number = 1): Promise<string> {
   const url = `${ENDPOINT}/watchlist/by/${id}/${page}`;
-  const res = await got.get(url);
+  const res = await got.get(url, { agent });
   return res.body;
 }
 
@@ -218,6 +218,10 @@ export async function RequestRemoveFromInbox(viewIds: string[]): Promise<void> {
   });
 }
 
-export async function watchToggle(watchLink: string): Promise<void> {
+/**
+ * Request the given url, toggle watching state
+ * @param watchLink link for watch or unwatch, can be get from IAuthor
+ */
+export async function RequestToggleWatch(watchLink: string): Promise<void> {
   await got.get(watchLink, { agent });
 }

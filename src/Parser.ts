@@ -5,6 +5,12 @@ import { IAuthor, IPagingResults, IResult, ISubmission } from "./interfaces";
 import { browse, gallery, scraps, search, submission, submissions } from ".";
 import { BrowseOptions, ENDPOINT, FaveSubmission, SearchOptions, SubmissionsOptions, RequestToggleWatch } from "./Request";
 
+export class FASystemError extends Error {
+  constructor(message: string) {
+    super(message)
+  }
+}
+
 /**
  * Convert author name to author id
  * @param name author name
@@ -26,7 +32,14 @@ function checkSystemMessage($: CheerioStatic) {
   const noticeMessage = $("section.notice-message");
   if (noticeMessage.length !== 0) {
     const systemMessage = noticeMessage[0].childNodes[1].childNodes[3].childNodes[0].nodeValue;
-    throw new Error(systemMessage);
+    throw new FASystemError(systemMessage);
+  }
+
+  // Check system error
+  const title = $("head title");
+  if (title[0].firstChild.data === "System Error") {
+    const sectionBody = $("section .section-body")
+    throw new FASystemError(sectionBody[0].firstChild.data?.trim() || "Unknown error.");
   }
 }
 

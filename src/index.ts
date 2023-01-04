@@ -4,6 +4,7 @@ import { IAuthor, IPagingResults, IResult, ISubmission } from "./interfaces";
 
 export * from "./Enums";
 export * from "./interfaces";
+export { FASystemError } from "./Parser";
 
 export { login, logout, setProxy } from "./Request";
 

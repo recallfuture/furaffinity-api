@@ -1,5 +1,10 @@
 ## CHANGELOG
 
+
+### 4.5.1
+
+- Fix checkSystemMessage
+
 ### 4.5.0
 
 - Watch and unwatch artists (#17)

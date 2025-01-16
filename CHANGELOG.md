@@ -1,5 +1,8 @@
 ## CHANGELOG
 
+### 4.5.2
+
+- Fix exceptions in parser after tag-blocking update (#20)
 
 ### 4.5.1
 
@@ -35,7 +38,7 @@
 
 ### Fix
 
-- Rename SearchOption `range_from` `range_to` to `rangeFrom` `rangeTo` 
+- Rename SearchOption `range_from` `range_to` to `rangeFrom` `rangeTo`
 - Fix date format to ISO string
 - Replae cloudscraper with hooman ([#12](https://github.com/recallfuture/furaffinity-api/pull/12))
 

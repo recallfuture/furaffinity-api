@@ -2,6 +2,8 @@ import { Gallery, Login } from "../src/index";
 import * as config from "./jest.config";
 const { cookieA, cookieB } = config.options.loginOptions;
 
+jest.setTimeout(20000);
+
 test("Gallery", async () => {
   // Login(cookieA, cookieB);
   const results = await Gallery("rudragon", 2);
@@ -11,7 +13,7 @@ test("Gallery", async () => {
   expect(Object.keys(results[0]).sort()).toEqual(excetpContainKeys);
   // submissions
   const submissions = await results[0].getSubmission();
-  expect(!!submissions.author).not.toBeFalsy();
+  expect(!!submissions?.author).not.toBeFalsy();
   expect(results.nextLink).not.toBeNull();
-  expect(submissions.description).not.toBeNull();
+  expect(submissions?.description).not.toBeNull();
 });

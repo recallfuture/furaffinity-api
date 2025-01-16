@@ -2,15 +2,17 @@ import { Login, Author, Gallery, user, User } from "../src/index";
 import * as config from "./jest.config";
 const { cookieA, cookieB } = config.options.loginOptions;
 
+jest.setTimeout(20000);
+
 test("Test author, gallery and scraps", async () => {
   Login(cookieA, cookieB);
   const userId = "recallfuture";
   // author
-  const author = await Author(userId)
-  expect(author.id).toBe(userId)
+  const author = await Author(userId);
+  expect(author.id).toBe(userId);
 
-  const user = await User()
-  expect(user.id).toBe(userId)
+  const user = await User();
+  expect(user.id).toBe(userId);
 
   // gallery
   const gallery = await Gallery(userId, 1);

@@ -115,8 +115,14 @@ export async function myWatchingList(): Promise<IAuthor[]> {
 
   while (true) {
     const users = ParseMyWatchingList(await FetchMyWatchingList(page++));
+    if (users.length === 0) {
+      break;
+    }
+    if (result.some((item) => item.id === users[0].id)) {
+      break;
+    }
     result = [...result, ...users];
-    if (users.length === 0 || users.length < 64) {
+    if (users.length < 64) {
       break;
     }
   }
@@ -138,7 +144,7 @@ export async function removeFromInbox(viewIds: string[]): Promise<void> {
  */
 export async function watchAuthor(id: string): Promise<void> {
   const author = await Author(id);
-  await author.watchAuthor?.()
+  await author.watchAuthor?.();
 }
 
 /**
@@ -147,7 +153,7 @@ export async function watchAuthor(id: string): Promise<void> {
  */
 export async function unwatchAuthor(id: string): Promise<void> {
   const author = await Author(id);
-  await author.unwatchAuthor?.()
+  await author.unwatchAuthor?.();
 }
 
 /**

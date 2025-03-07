@@ -14,8 +14,8 @@ test("Search and get submissions", async () => {
   expect(secondPage.length).toBeGreaterThan(0);
   expect(thirdPage.length).toBeGreaterThan(0);
 
-  const prevPage = await secondPage.prev();
-  const nextPage = await secondPage.next();
+  const prevPage = (await secondPage.prev?.()) || [];
+  const nextPage = (await secondPage.next?.()) || [];
 
   expect(prevPage.length).toBeGreaterThan(0);
   expect(nextPage.length).toBeGreaterThan(0);

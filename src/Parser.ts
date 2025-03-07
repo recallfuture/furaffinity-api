@@ -7,7 +7,7 @@ import { BrowseOptions, ENDPOINT, FaveSubmission, SearchOptions, SubmissionsOpti
 
 export class FASystemError extends Error {
   constructor(message: string) {
-    super(message)
+    super(message);
   }
 }
 
@@ -38,7 +38,7 @@ function checkSystemMessage($: CheerioStatic) {
   // Check system error
   const title = $("head title");
   if (title[0].firstChild.data === "System Error") {
-    const sectionBody = $("section .section-body")
+    const sectionBody = $("section .section-body");
     throw new FASystemError(sectionBody[0].firstChild.data?.trim() || "Unknown error.");
   }
 }
@@ -289,7 +289,7 @@ export function ParseSubmission(body: string, id: string): ISubmission {
 
   // header
   const title: string = content.find(".submission-id-sub-container .submission-title p")[0].childNodes[0].data?.trim() ?? "";
-  const authorName: string = content.find(".submission-id-sub-container a strong")[0].childNodes[0].data?.trim() ?? "";
+  const authorName: string = content.find(".submission-id-sub-container .c-usernameBlockSimple__displayName")[0].childNodes[0].data?.trim() ?? "";
   const authorId: string = convertNameToId(authorName);
   const posted: string = content.find(".submission-id-sub-container strong span")[0].attribs.title;
   const authorAvatar: string = `http:${content.find(".submission-id-avatar img")[0].attribs.src}`;
@@ -364,12 +364,12 @@ export function ParseAuthor(body: string): IAuthor {
 
   checkSystemMessage($);
 
-  const name: string = $("userpage-nav-user-details username")[0].childNodes[0].data?.trim().slice(1) ?? "";
+  const name: string = $("userpage-nav-user-details .js-displayName")[0].childNodes[0].data?.trim() ?? "";
   const id: string = convertNameToId(name);
   const url: string = `https://www.furaffinity.net/user/${id}`;
   const shinies: boolean = !!$(".userpage-layout-left-col-content > a:nth-child(4)");
   const avatar: string = `https:${$("userpage-nav-avatar img")[0].attribs.src}`;
-  
+
   const statsCells = $(".userpage-section-right .cell");
   const views: string = statsCells[0].childNodes[2].data?.trim() ?? "0";
   const submissions: string = statsCells[0].childNodes[6].data?.trim() ?? "0";
@@ -377,11 +377,11 @@ export function ParseAuthor(body: string): IAuthor {
   const commentsEarned: string = statsCells[1].childNodes[2].data?.trim() ?? "0";
   const commentsMade: string = statsCells[1].childNodes[6].data?.trim() ?? "0";
   const journals: string = statsCells[1].childNodes[10].data?.trim() ?? "0";
-  
+
   // TODO: add exception if author is user, if not already done
   const watchButton = $("userpage-nav-interface-buttons a")[0];
   const watchLink = watchButton ? `${ENDPOINT}${watchButton.attribs.href}` : undefined;
-  const watching = watchButton ? watchButton.attribs.class.includes('stop') : false;
+  const watching = watchButton ? watchButton.attribs.class.includes("stop") : false;
 
   return {
     id,
@@ -401,10 +401,8 @@ export function ParseAuthor(body: string): IAuthor {
 
       watching
     },
-    watchAuthor: !watching && watchLink
-      ? async () => await RequestToggleWatch(watchLink) : undefined,
-    unwatchAuthor: watching && watchLink
-    ? async () => await RequestToggleWatch(watchLink) : undefined
+    watchAuthor: !watching && watchLink ? async () => await RequestToggleWatch(watchLink) : undefined,
+    unwatchAuthor: watching && watchLink ? async () => await RequestToggleWatch(watchLink) : undefined
   };
 }
 
@@ -417,7 +415,7 @@ export function ParseWatchingList(body: string): IAuthor[] {
 
   checkSystemMessage($);
 
-  return $(".watch-list-items a")
+  return $(".watch-list-items a span")
     .map((index, a) => {
       const name = a.childNodes[0].data?.trim() ?? "";
       const id = convertNameToId(name);
@@ -444,7 +442,7 @@ export function ParseMyWatchingList(body: string): IAuthor[] {
   return $(".flex-item-watchlist")
     .map((index, div) => {
       const avatar = `https:${$(div).find("img.avatar")[0].attribs.src}`;
-      const name = $(div).find(".flex-item-watchlist-controls a strong")[0].childNodes[0].data?.trim() ?? "";
+      const name = $(div).find(".flex-item-watchlist-controls .c-usernameBlockSimple__displayName")[0].childNodes[0].data?.trim() ?? "";
       const id = convertNameToId(name);
       const url = `${ENDPOINT}/user/${id}`;
 

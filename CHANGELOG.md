@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### 4.5.3
+
+- Fix FA site change(breaking submission, author and watching list API)
+
 ### 4.5.2
 
 - Fix exceptions in parser after tag-blocking update (#20)

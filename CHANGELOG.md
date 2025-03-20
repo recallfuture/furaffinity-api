@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### 4.5.4
+
+- Fix FurAffinity new Display Names break author ids (#21)
+
 ### 4.5.3
 
 - Fix FA site change(breaking submission, author and watching list API)

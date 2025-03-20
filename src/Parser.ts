@@ -290,7 +290,7 @@ export function ParseSubmission(body: string, id: string): ISubmission {
   // header
   const title: string = content.find(".submission-id-sub-container .submission-title p")[0].childNodes[0].data?.trim() ?? "";
   const authorName: string = content.find(".submission-id-sub-container .c-usernameBlockSimple__displayName")[0].childNodes[0].data?.trim() ?? "";
-  const authorId: string = convertNameToId(authorName);
+  const authorId: string = content.find(".submission-id-sub-container .c-usernameBlockSimple__displayName")[0].attribs.title.trim();
   const posted: string = content.find(".submission-id-sub-container strong span")[0].attribs.title;
   const authorAvatar: string = `http:${content.find(".submission-id-avatar img")[0].attribs.src}`;
   const authorShinies: boolean = !!$(".shinies-promo");

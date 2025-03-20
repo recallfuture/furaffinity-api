@@ -16,7 +16,7 @@ export class FASystemError extends Error {
  * @param name author name
  */
 function convertNameToId(name: string): string {
-  return name.trim().replace(/_/g, "").replace(/ /g, "").toLowerCase();
+  return name.trim().replace("_", "").toLowerCase();
 }
 
 /**
@@ -51,7 +51,11 @@ export function ParseFigure(figure: CheerioElement, selector: Cheerio): IResult 
   const id: string = figure.attribs.id.split("-").pop() ?? "";
   const thumb: string = "http:" + figure.childNodes[1].childNodes[1].childNodes[1].childNodes[1].attribs.src;
   const authorName = selector.find("figcaption p:last-child a").first().attr().title;
-  const authorId = convertNameToId(authorName);
+  const authorId = selector
+    .find("figcaption p:last-child a")
+    .first()
+    .attr()
+    .href.replace(/^\/user\/|\/$/g, "");
 
   return {
     type: SubmissionType[classNames(figure)[1].split("-").pop() as keyof typeof SubmissionType],
@@ -290,7 +294,7 @@ export function ParseSubmission(body: string, id: string): ISubmission {
   // header
   const title: string = content.find(".submission-id-sub-container .submission-title p")[0].childNodes[0].data?.trim() ?? "";
   const authorName: string = content.find(".submission-id-sub-container .c-usernameBlockSimple__displayName")[0].childNodes[0].data?.trim() ?? "";
-  const authorId: string = convertNameToId(authorName);
+  const authorId: string = content.find(".submission-id-sub-container .c-usernameBlockSimple__displayName")[0].attribs.title.trim();
   const posted: string = content.find(".submission-id-sub-container strong span")[0].attribs.title;
   const authorAvatar: string = `http:${content.find(".submission-id-avatar img")[0].attribs.src}`;
   const authorShinies: boolean = !!$(".shinies-promo");
@@ -365,7 +369,7 @@ export function ParseAuthor(body: string): IAuthor {
   checkSystemMessage($);
 
   const name: string = $("userpage-nav-user-details .js-displayName")[0].childNodes[0].data?.trim() ?? "";
-  const id: string = convertNameToId(name);
+  const id: string = $("userpage-nav-user-details .js-userName-block span")[0].childNodes[1].data?.trim() ?? "";
   const url: string = `https://www.furaffinity.net/user/${id}`;
   const shinies: boolean = !!$(".userpage-layout-left-col-content > a:nth-child(4)");
   const avatar: string = `https:${$("userpage-nav-avatar img")[0].attribs.src}`;
@@ -416,9 +420,9 @@ export function ParseWatchingList(body: string): IAuthor[] {
   checkSystemMessage($);
 
   return $(".watch-list-items a span")
-    .map((index, a) => {
-      const name = a.childNodes[0].data?.trim() ?? "";
-      const id = convertNameToId(name);
+    .map((index, span) => {
+      const name = span.childNodes[0].data?.trim() ?? "";
+      const id = span.attribs.title.trim();
       const url = `${ENDPOINT}/user/${id}`;
 
       return {
@@ -443,7 +447,7 @@ export function ParseMyWatchingList(body: string): IAuthor[] {
     .map((index, div) => {
       const avatar = `https:${$(div).find("img.avatar")[0].attribs.src}`;
       const name = $(div).find(".flex-item-watchlist-controls .c-usernameBlockSimple__displayName")[0].childNodes[0].data?.trim() ?? "";
-      const id = convertNameToId(name);
+      const id = $(div).find(".flex-item-watchlist-controls .c-usernameBlockSimple__displayName")[0].attribs.title.trim();
       const url = `${ENDPOINT}/user/${id}`;
 
       return {
